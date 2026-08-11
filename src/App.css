@@ -23,6 +23,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 0;
 }
 
 body {
@@ -59,8 +60,8 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  min-height: 66px;
-  padding: 10px clamp(18px, 6vw, 92px);
+  min-height: 88px;
+  padding: 8px clamp(18px, 6vw, 92px);
   background: rgba(255, 255, 255, 0.96);
   border-bottom: 1px solid var(--line);
   box-shadow: 0 6px 22px rgba(72, 63, 24, 0.08);
@@ -70,15 +71,25 @@ a {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
 }
 
-.brand-logo {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
+.brand-logo-frame {
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  overflow: hidden;
   flex: 0 0 auto;
+}
+
+.brand-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.13);
 }
 
 .brand strong,
@@ -243,6 +254,13 @@ a {
 .gallery-section,
 .contact-section {
   padding: clamp(46px, 7vw, 82px) clamp(18px, 6vw, 92px);
+}
+
+.hero-section,
+.catalog-section,
+.gallery-section,
+.contact-section {
+  scroll-margin-top: 0;
 }
 
 .section-title {
@@ -554,7 +572,7 @@ a {
 
   .nav-links {
     position: absolute;
-    top: 65px;
+    top: 87px;
     left: 16px;
     right: 16px;
     display: none;

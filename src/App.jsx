@@ -60,6 +60,27 @@ const gallery = ['Latihan rutin', 'Pengesahan anggota', 'Kejuaraan', 'Silaturahm
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const closeMenu = () => setMenuOpen(false)
+  const scrollToSection = (event, href) => {
+    if (!href.startsWith('#')) return
+
+    const target = document.querySelector(href)
+    if (!target) return
+
+    event.preventDefault()
+    closeMenu()
+
+    if (href === '#beranda') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.history.pushState(null, '', href)
+      return
+    }
+
+    const headerHeight = document.querySelector('.site-header')?.offsetHeight ?? 0
+    const targetTop = target.getBoundingClientRect().top + window.scrollY - headerHeight
+
+    window.scrollTo({ top: targetTop, behavior: 'smooth' })
+    window.history.pushState(null, '', href)
+  }
 
   return (
     <div className="site-shell">
@@ -69,8 +90,15 @@ function App() {
       </div>
 
       <header className="site-header">
-        <a className="brand" href="#beranda" aria-label='UKM PSHT UPN "Veteran" Jawa Timur'>
-          <img className="brand-logo" src={logoImg} alt='Logo UKM PSHT UPN "Veteran" Jawa Timur' />
+        <a
+          className="brand"
+          href="#beranda"
+          aria-label='UKM PSHT UPN "Veteran" Jawa Timur'
+          onClick={(event) => scrollToSection(event, '#beranda')}
+        >
+          <span className="brand-logo-frame">
+            <img className="brand-logo" src={logoImg} alt='Logo UKM PSHT UPN "Veteran" Jawa Timur' />
+          </span>
           <span>
             <strong>UKM PSHT</strong>
             <small>UPN "Veteran" Jatim</small>
@@ -91,7 +119,7 @@ function App() {
 
         <nav className={menuOpen ? 'nav-links open' : 'nav-links'} aria-label="Navigasi utama">
           {navItems.map((item) => (
-            <a key={item.href} href={item.href} onClick={closeMenu}>
+            <a key={item.href} href={item.href} onClick={(event) => scrollToSection(event, item.href)}>
               {item.label}
             </a>
           ))}
@@ -108,7 +136,9 @@ function App() {
             <p>Persaudaraan Setia Hati Terate</p>
             <h1>UKM PSHT UPN "Veteran" Jawa Timur</h1>
             <span>Disiplin, prestasi, dan persaudaraan dalam satu wadah mahasiswa.</span>
-            <a href="#kontak">Bergabung Sekarang</a>
+            <a href="#kontak" onClick={(event) => scrollToSection(event, '#kontak')}>
+              Bergabung Sekarang
+            </a>
           </div>
         </section>
 
@@ -142,7 +172,9 @@ function App() {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
-                  <a href={card.href}>Lihat detail</a>
+                  <a href={card.href} onClick={(event) => scrollToSection(event, card.href)}>
+                    Lihat detail
+                  </a>
                 </div>
               </article>
             ))}
@@ -176,7 +208,9 @@ function App() {
                   <span>{leader.period}</span>
                   <h3>{leader.name}</h3>
                   <p>{leader.note}</p>
-                  <a href="#kontak">Hubungi pengurus</a>
+                  <a href="#kontak" onClick={(event) => scrollToSection(event, '#kontak')}>
+                    Hubungi pengurus
+                  </a>
                 </div>
               </article>
             ))}
@@ -200,7 +234,9 @@ function App() {
                   <span>Prestasi</span>
                   <h3>{achievement.event}</h3>
                   <p>{achievement.result}</p>
-                  <a href="#kontak">Lihat detail</a>
+                  <a href="#kontak" onClick={(event) => scrollToSection(event, '#kontak')}>
+                    Lihat detail
+                  </a>
                 </div>
               </article>
             ))}
