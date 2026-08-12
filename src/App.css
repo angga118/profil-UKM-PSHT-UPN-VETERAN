@@ -40,6 +40,115 @@ a {
   min-height: 100vh;
 }
 
+.contact-popup-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(21, 24, 18, 0.68);
+  animation: popupFadeIn 0.24s ease both;
+}
+
+.contact-popup {
+  position: relative;
+  width: min(430px, 92vw);
+  padding: 28px;
+  border: 2px solid var(--wood);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--ink);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.32);
+  animation: popupRiseIn 0.28s ease both;
+}
+
+.contact-popup p {
+  margin: 0 0 8px;
+  color: var(--wood-dark);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.contact-popup h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.18;
+}
+
+.contact-popup span {
+  display: block;
+  margin-top: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.contact-popup a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 10px 16px;
+  border-radius: 4px;
+  background: var(--red);
+  color: #ffffff;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.contact-popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #fff8dc;
+  color: var(--ink);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.contact-popup-close:hover,
+.contact-popup-close:focus-visible {
+  background: var(--red);
+  color: #ffffff;
+  outline: none;
+}
+
+.contact-icon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popupRiseIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .topbar {
   display: flex;
   justify-content: center;
@@ -156,10 +265,7 @@ a {
   place-items: center;
   padding: 86px 20px;
   overflow: hidden;
-  background:
-    linear-gradient(rgba(23, 27, 22, 0.38), rgba(23, 27, 22, 0.58)),
-    linear-gradient(90deg, rgba(214, 179, 47, 0.2), rgba(47, 92, 58, 0.16)),
-    var(--hero-photo) center 46% / cover no-repeat;
+  background: #151812;
 }
 
 .hero-section::before,
@@ -170,14 +276,21 @@ a {
 }
 
 .hero-section::before {
+  z-index: 0;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.34));
+  background:
+    linear-gradient(rgba(23, 27, 22, 0.38), rgba(23, 27, 22, 0.58)),
+    linear-gradient(90deg, rgba(214, 179, 47, 0.2), rgba(47, 92, 58, 0.16)),
+    var(--hero-photo) center 46% / cover no-repeat;
+  animation: heroImageEnter 1s ease both;
 }
 
 .hero-section::after {
-  inset: auto 0 0;
-  height: 34%;
-  background: linear-gradient(transparent, rgba(15, 18, 14, 0.46));
+  z-index: 1;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.34)),
+    linear-gradient(transparent 66%, rgba(15, 18, 14, 0.46));
 }
 
 .hero-overlay {
@@ -188,6 +301,7 @@ a {
   text-align: center;
   color: #ffffff;
   text-shadow: 0 3px 18px rgba(27, 31, 24, 0.42);
+  animation: heroContentEnter 0.72s ease 0.24s both;
 }
 
 .hero-overlay p {
@@ -227,6 +341,45 @@ a {
   font-weight: 900;
   text-decoration: none;
   text-shadow: none;
+  animation: heroButtonEnter 0.6s ease 0.56s both;
+}
+
+@keyframes heroImageEnter {
+  from {
+    opacity: 0;
+    filter: brightness(0.74) saturate(0.82);
+    transform: scale(1.08);
+  }
+
+  to {
+    opacity: 1;
+    filter: brightness(1) saturate(1);
+    transform: scale(1);
+  }
+}
+
+@keyframes heroContentEnter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes heroButtonEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .welcome-strip {
@@ -521,31 +674,58 @@ a {
   gap: 10px;
 }
 
-.contact-panel a,
-.contact-panel div {
+.contact-panel button,
+.contact-info {
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  text-decoration: none;
 }
 
-.contact-panel a {
+.contact-panel button {
   display: flex;
-  min-height: 48px;
+  min-height: 64px;
   align-items: center;
   justify-content: center;
+  gap: 14px;
+  border: 0;
+  color: #ffffff;
+  font-size: 1rem;
   font-weight: 900;
+  cursor: pointer;
 }
 
-.contact-panel a:first-child {
+.contact-action.whatsapp {
   background: var(--red);
+}
+
+.contact-action.instagram {
+  background: var(--green);
+}
+
+.contact-action:hover,
+.contact-action:focus-visible {
+  filter: brightness(1.08);
+  outline: 2px solid rgba(255, 255, 255, 0.72);
+  outline-offset: 2px;
+}
+
+.contact-info {
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  color: #ffffff;
+}
+
+.contact-info.schedule {
+  background: rgba(35, 38, 31, 0.88);
+}
+
+.contact-info.location {
+  background: rgba(255, 251, 234, 0.96);
+  color: var(--ink);
 }
 
 .contact-panel small {
   display: block;
-  color: #fff8dc;
+  color: inherit;
+  opacity: 0.82;
   font-weight: 800;
   text-transform: uppercase;
 }

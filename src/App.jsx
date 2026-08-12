@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import heroImg from './assets/hero.png'
 import heroGroupImg from './assets/hero-group.jpg'
+import instagramLogo from './assets/instagram-logo.svg'
 import logoImg from './assets/psht-logo.jpg'
+import whatsappLogo from './assets/whatsapp-logo.svg'
 import './App.css'
 
 const navItems = [
@@ -57,9 +59,34 @@ const achievements = [
 
 const gallery = ['Latihan rutin', 'Pengesahan anggota', 'Kejuaraan', 'Silaturahmi alumni']
 
+const contactPopups = {
+  whatsapp: {
+    title: 'WhatsApp Pengurus',
+    text: 'Hubungi pengurus UKM PSHT untuk bertanya jadwal latihan, pendaftaran, atau agenda anggota baru.',
+    action: 'Buka WhatsApp',
+    href: 'https://wa.me/6280000000000',
+    icon: 'whatsapp',
+  },
+  instagram: {
+    title: 'Instagram Resmi',
+    text: 'Lihat dokumentasi kegiatan, informasi latihan, dan kabar terbaru dari UKM PSHT UPN.',
+    action: 'Buka Instagram',
+    href: 'https://www.instagram.com/psht_upn?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
+    icon: 'instagram',
+  },
+}
+
+function ContactIcon({ type }) {
+  const iconSrc = type === 'instagram' ? instagramLogo : whatsappLogo
+
+  return <img className="contact-icon" src={iconSrc} alt="" aria-hidden="true" />
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [activePopup, setActivePopup] = useState(null)
   const closeMenu = () => setMenuOpen(false)
+  const popupContent = activePopup ? contactPopups[activePopup] : null
   const scrollToSection = (event, href) => {
     if (!href.startsWith('#')) return
 
@@ -76,7 +103,13 @@ function App() {
     }
 
     const headerHeight = document.querySelector('.site-header')?.offsetHeight ?? 0
-    const targetTop = target.getBoundingClientRect().top + window.scrollY - headerHeight
+    const sectionPaddingTop = Number.parseFloat(window.getComputedStyle(target).paddingTop) || 0
+    const contentGap = 24
+    const targetTop =
+      target.getBoundingClientRect().top +
+      window.scrollY -
+      headerHeight +
+      Math.max(0, sectionPaddingTop - contentGap)
 
     window.scrollTo({ top: targetTop, behavior: 'smooth' })
     window.history.pushState(null, '', href)
@@ -84,9 +117,36 @@ function App() {
 
   return (
     <div className="site-shell">
+      {popupContent && (
+        <div className="contact-popup-backdrop" onClick={() => setActivePopup(null)}>
+          <div
+            className="contact-popup"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="contact-popup-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="contact-popup-close"
+              type="button"
+              aria-label="Tutup pop up"
+              onClick={() => setActivePopup(null)}
+            >
+              X
+            </button>
+            <p>Kontak UKM</p>
+            <h3 id="contact-popup-title">{popupContent.title}</h3>
+            <span>{popupContent.text}</span>
+            <a href={popupContent.href} target="_blank" rel="noreferrer">
+              <ContactIcon type={popupContent.icon} />
+              {popupContent.action}
+            </a>
+          </div>
+        </div>
+      )}
+
       <div className="topbar">
-        <span>UKM Persaudaraan Setia Hati Terate</span>
-        <span>UPN "Veteran" Jawa Timur</span>
+       
       </div>
 
       <header className="site-header">
@@ -270,19 +330,21 @@ function App() {
           </div>
 
           <div className="contact-panel">
-            <a href="https://wa.me/6280000000000" target="_blank" rel="noreferrer">
-              WhatsApp Pengurus
-            </a>
-            <a href="https://instagram.com/" target="_blank" rel="noreferrer">
-              Instagram Resmi
-            </a>
-            <div>
+            <button className="contact-action whatsapp" type="button" onClick={() => setActivePopup('whatsapp')}>
+              <ContactIcon type="whatsapp" />
+              WhatsApp 
+            </button>
+            <button className="contact-action instagram" type="button" onClick={() => setActivePopup('instagram')}>
+              <ContactIcon type="instagram" />
+              Instagram 
+            </button>
+            <div className="contact-info schedule">
               <small>Jadwal latihan</small>
-              <strong>Selasa dan Kamis, 19.00 WIB</strong>
+              <strong>Selasa dan Kamis, 19.22 WIB</strong>
             </div>
-            <div>
+            <div className="contact-info location">
               <small>Lokasi</small>
-              <strong>Area Kampus UPN "Veteran" Jawa Timur</strong>
+              <strong> Depan Rektorat UPN "Veteran" Jawa Timur</strong>
             </div>
           </div>
         </section>
@@ -290,7 +352,7 @@ function App() {
 
       <footer className="site-footer">
         <span>UKM PSHT UPN "Veteran" Jawa Timur</span>
-        <span>Landing page statis v1</span>
+        <span>Design by Angga</span>
       </footer>
     </div>
   )
