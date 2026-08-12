@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import heroImg from './assets/hero.png'
 import heroGroupImg from './assets/hero-group.jpg'
 import instagramLogo from './assets/instagram-logo.svg'
+import kejuaraanImg from './assets/kejuaraan.jpeg'
 import logoImg from './assets/psht-logo.jpg'
+import pengesahanImg from './assets/pengesahan.jpeg'
 import whatsappLogo from './assets/whatsapp-logo.svg'
 import './App.css'
 
@@ -57,7 +59,12 @@ const achievements = [
   },
 ]
 
-const gallery = ['Latihan rutin', 'Pengesahan anggota', 'Kejuaraan', 'Silaturahmi alumni']
+const gallery = [
+  { title: 'Latihan rutin', image: heroGroupImg },
+  { title: 'Pengesahan warga baru', image: pengesahanImg },
+  { title: 'Kejuaraan', image: kejuaraanImg },
+  
+]
 
 const contactPopups = {
   whatsapp: {
@@ -85,6 +92,15 @@ function ContactIcon({ type }) {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activePopup, setActivePopup] = useState(null)
+  const [activeGallerySlide, setActiveGallerySlide] = useState(0)
+
+  useEffect(() => {
+    const sliderInterval = window.setInterval(() => {
+      setActiveGallerySlide((currentSlide) => (currentSlide + 1) % gallery.length)
+    }, 4500)
+
+    return () => window.clearInterval(sliderInterval)
+  }, [])
   const closeMenu = () => setMenuOpen(false)
   const popupContent = activePopup ? contactPopups[activePopup] : null
   const scrollToSection = (event, href) => {
@@ -301,17 +317,45 @@ function App() {
 
         <section className="gallery-section" id="galeri">
           <div className="section-title">
-            <p>Galeri</p>
-            <h2>Dokumentasi Kegiatan</h2>
+            <h2 className="gallery-heading">Galeri PSHT UPN"Veteran"Jawa Timur</h2>
           </div>
 
-          <div className="gallery-grid">
-            {gallery.map((item) => (
-              <figure className="gallery-tile" key={item}>
-                <img src={heroImg} alt="" />
-                <figcaption>{item}</figcaption>
-              </figure>
-            ))}
+          <div className="gallery-slider">
+            <figure className="gallery-slide">
+              <img src={gallery[activeGallerySlide].image} alt={`Dokumentasi ${gallery[activeGallerySlide].title}`} />
+              <figcaption>
+                <span>Dokumentasi UKM PSHT</span>
+                <strong>{gallery[activeGallerySlide].title}</strong>
+              </figcaption>
+            </figure>
+            <button
+              className="gallery-slider-button previous"
+              type="button"
+              aria-label="Dokumentasi sebelumnya"
+              onClick={() => setActiveGallerySlide((currentSlide) => (currentSlide - 1 + gallery.length) % gallery.length)}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7" /></svg>
+            </button>
+            <button
+              className="gallery-slider-button next"
+              type="button"
+              aria-label="Dokumentasi berikutnya"
+              onClick={() => setActiveGallerySlide((currentSlide) => (currentSlide + 1) % gallery.length)}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 5 7 7-7 7" /></svg>
+            </button>
+            <div className="gallery-slider-dots" aria-label="Pilih dokumentasi kegiatan">
+              {gallery.map((item, index) => (
+                <button
+                  key={item.title}
+                  className={index === activeGallerySlide ? 'active' : ''}
+                  type="button"
+                  aria-label={`Tampilkan ${item.title}`}
+                  aria-current={index === activeGallerySlide ? 'true' : undefined}
+                  onClick={() => setActiveGallerySlide(index)}
+                />
+              ))}
+            </div>
           </div>
         </section>
 
