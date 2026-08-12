@@ -145,10 +145,6 @@ function App() {
         </div>
       )}
 
-      <div className="topbar">
-       
-      </div>
-
       <header className="site-header">
         <a
           className="brand"
@@ -195,7 +191,7 @@ function App() {
           <div className="hero-overlay">
             <p>Persaudaraan Setia Hati Terate</p>
             <h1>UKM PSHT UPN "Veteran" Jawa Timur</h1>
-            <span>Disiplin, prestasi, dan persaudaraan dalam satu wadah mahasiswa.</span>
+            <span>Tangguh Dalam Aksi, Unggul Dalam Prestasi PSHT KOMISARIAT UPN VETERAN JAWA TIMUR, JAYA!!!</span>
             <a href="#kontak" onClick={(event) => scrollToSection(event, '#kontak')}>
               Bergabung Sekarang
             </a>
