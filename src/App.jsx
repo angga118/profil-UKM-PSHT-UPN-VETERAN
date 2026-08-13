@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import heroImg from './assets/hero.png'
 import heroGroupImg from './assets/hero-group.jpg'
 import instagramLogo from './assets/instagram-logo.svg'
@@ -6,6 +6,7 @@ import kejuaraanImg from './assets/kejuaraan.jpeg'
 import logoImg from './assets/psht-logo.jpg'
 import pengesahanImg from './assets/pengesahan.jpeg'
 import whatsappLogo from './assets/whatsapp-logo.svg'
+import HistoryPage from './HistoryPage'
 import './App.css'
 
 const navItems = [
@@ -60,10 +61,9 @@ const achievements = [
 ]
 
 const gallery = [
-  { title: 'Latihan rutin', image: heroGroupImg },
-  { title: 'Pengesahan warga baru', image: pengesahanImg },
-  { title: 'Kejuaraan', image: kejuaraanImg },
-  
+  { title: 'Foto kabinet', date: 'Dokumentasi kepengurusan', image: heroGroupImg },
+  { title: 'Pengesahan warga baru 2026', date: 'Kegiatan organisasi · 2026', image: pengesahanImg },
+  { title: 'Kejuaraan Airlangga Cup 2026', date: 'Kejuaraan · 2026', image: kejuaraanImg },
 ]
 
 const contactPopups = {
@@ -71,7 +71,7 @@ const contactPopups = {
     title: 'WhatsApp Pengurus',
     text: 'Hubungi pengurus UKM PSHT untuk bertanya jadwal latihan, pendaftaran, atau agenda anggota baru.',
     action: 'Buka WhatsApp',
-    href: 'https://wa.me/6280000000000',
+    href: 'https://wa.me/6281555861168',
     icon: 'whatsapp',
   },
   instagram: {
@@ -93,16 +93,112 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activePopup, setActivePopup] = useState(null)
   const [activeGallerySlide, setActiveGallerySlide] = useState(0)
+  const [isHistoryPage, setIsHistoryPage] = useState(false)
+  const [galleryPaused, setGalleryPaused] = useState(false)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const popupCloseButtonRef = useRef(null)
+  const popupTriggerRef = useRef(null)
+  const lightboxCloseButtonRef = useRef(null)
+  const lightboxTriggerRef = useRef(null)
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion || galleryPaused || lightboxOpen) return undefined
+
     const sliderInterval = window.setInterval(() => {
       setActiveGallerySlide((currentSlide) => (currentSlide + 1) % gallery.length)
     }, 4500)
 
     return () => window.clearInterval(sliderInterval)
+  }, [galleryPaused, lightboxOpen])
+
+  useEffect(() => {
+    if (!activePopup) return undefined
+
+    const closePopupWithKeyboard = (event) => {
+      if (event.key === 'Escape') {
+        setActivePopup(null)
+      }
+    }
+
+    document.addEventListener('keydown', closePopupWithKeyboard)
+    popupCloseButtonRef.current?.focus()
+
+    return () => {
+      document.removeEventListener('keydown', closePopupWithKeyboard)
+      popupTriggerRef.current?.focus()
+    }
+  }, [activePopup])
+
+  useEffect(() => {
+    const updateHistoryPage = () => setIsHistoryPage(window.location.hash === '#sejarah-detail')
+    updateHistoryPage()
+    window.addEventListener('hashchange', updateHistoryPage)
+
+    return () => {
+      window.removeEventListener('hashchange', updateHistoryPage)
+    }
   }, [])
+
+  useEffect(() => {
+    if (!lightboxOpen) return undefined
+
+    const closeLightboxWithKeyboard = (event) => {
+      if (event.key === 'Escape') setLightboxOpen(false)
+    }
+
+    document.addEventListener('keydown', closeLightboxWithKeyboard)
+    lightboxCloseButtonRef.current?.focus()
+
+    return () => {
+      document.removeEventListener('keydown', closeLightboxWithKeyboard)
+      lightboxTriggerRef.current?.focus()
+    }
+  }, [lightboxOpen])
+
+  useEffect(() => {
+    const revealItems = document.querySelectorAll('.reveal-on-scroll')
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+      revealItems.forEach((item) => item.classList.add('is-visible'))
+      return undefined
+    }
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add('is-visible')
+          revealObserver.unobserve(entry.target)
+        })
+      },
+      { threshold: 0.12 },
+    )
+
+    revealItems.forEach((item) => revealObserver.observe(item))
+    return () => revealObserver.disconnect()
+  }, [isHistoryPage])
+
   const closeMenu = () => setMenuOpen(false)
   const popupContent = activePopup ? contactPopups[activePopup] : null
+  const openPopup = (event, popupType) => {
+    popupTriggerRef.current = event.currentTarget
+    setActivePopup(popupType)
+  }
+  const openHistory = () => {
+    window.history.pushState(null, '', '#sejarah-detail')
+    setIsHistoryPage(true)
+  }
+  const closeHistory = (event) => {
+    event.preventDefault()
+    window.history.pushState(null, '', '#sejarah')
+    setIsHistoryPage(false)
+
+    window.requestAnimationFrame(() => {
+      document.querySelector('#sejarah')?.scrollIntoView({ behavior: 'smooth' })
+    })
+  }
   const scrollToSection = (event, href) => {
     if (!href.startsWith('#')) return
 
@@ -131,6 +227,8 @@ function App() {
     window.history.pushState(null, '', href)
   }
 
+  if (isHistoryPage) return <HistoryPage onBack={closeHistory} />
+
   return (
     <div className="site-shell">
       {popupContent && (
@@ -146,9 +244,10 @@ function App() {
               className="contact-popup-close"
               type="button"
               aria-label="Tutup pop up"
+              ref={popupCloseButtonRef}
               onClick={() => setActivePopup(null)}
             >
-              X
+              &times;
             </button>
             <p>Kontak UKM</p>
             <h3 id="contact-popup-title">{popupContent.title}</h3>
@@ -157,6 +256,33 @@ function App() {
               <ContactIcon type={popupContent.icon} />
               {popupContent.action}
             </a>
+          </div>
+        </div>
+      )}
+
+      {lightboxOpen && (
+        <div className="gallery-lightbox-backdrop" onClick={() => setLightboxOpen(false)}>
+          <div
+            className="gallery-lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="gallery-lightbox-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="gallery-lightbox-close"
+              type="button"
+              aria-label="Tutup tampilan foto"
+              ref={lightboxCloseButtonRef}
+              onClick={() => setLightboxOpen(false)}
+            >
+              &times;
+            </button>
+            <img src={gallery[activeGallerySlide].image} alt={`Dokumentasi ${gallery[activeGallerySlide].title}`} />
+            <div>
+              <span>{gallery[activeGallerySlide].date}</span>
+              <strong id="gallery-lightbox-title">{gallery[activeGallerySlide].title}</strong>
+            </div>
           </div>
         </div>
       )}
@@ -220,7 +346,7 @@ function App() {
         </section>
 
         <section className="catalog-section" id="sejarah">
-          <div className="section-title">
+          <div className="section-title reveal-on-scroll">
             <p>Profil UKM</p>
             <h2>Informasi Utama</h2>
             <span>
@@ -230,10 +356,10 @@ function App() {
           </div>
 
           <div className="profile-grid">
-            {profileCards.map((card) => (
-              <article className="info-card feature-card" key={card.title}>
+            {profileCards.map((card, index) => (
+              <article className="info-card feature-card reveal-on-scroll" key={card.title} style={{ '--reveal-delay': `${index * 90}ms` }}>
                 <div className="card-image">
-                  <img src={heroImg} alt="" />
+                  <img src={heroImg} alt="" loading="lazy" decoding="async" />
                 </div>
                 <div className="card-body">
                   <span>{card.eyebrow}</span>
@@ -244,7 +370,16 @@ function App() {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
-                  <a href={card.href} onClick={(event) => scrollToSection(event, card.href)}>
+                  <a
+                    href={card.href}
+                    onClick={(event) => {
+                      if (card.title === 'Sejarah UKM') {
+                        event.preventDefault()
+                        openHistory()
+                      }
+                      else scrollToSection(event, card.href)
+                    }}
+                  >
                     Lihat detail
                   </a>
                 </div>
@@ -252,7 +387,7 @@ function App() {
             ))}
           </div>
 
-          <div className="history-panel">
+          <div className="history-panel reveal-on-scroll">
             <h3>Sejarah Singkat</h3>
             <p>
               UKM PSHT UPN "Veteran" Jawa Timur menjadi ruang pembinaan mahasiswa yang ingin
@@ -264,25 +399,22 @@ function App() {
         </section>
 
         <section className="catalog-section soft-section" id="ketua">
-          <div className="section-title">
+          <div className="section-title reveal-on-scroll">
             <p>Regenerasi</p>
             <h2>Daftar Ketua UKM</h2>
             <span>Urutan dibuat dari periode terbaru agar pengunjung melihat kepengurusan terkini.</span>
           </div>
 
           <div className="card-grid">
-            {leaders.map((leader) => (
-              <article className="info-card" key={`${leader.name}-${leader.period}`}>
+            {leaders.map((leader, index) => (
+              <article className="info-card reveal-on-scroll" key={`${leader.name}-${leader.period}`} style={{ '--reveal-delay': `${index * 80}ms` }}>
                 <div className="card-image mini">
-                  <img src={heroImg} alt="" />
+                  <img src={heroImg} alt="" loading="lazy" decoding="async" />
                 </div>
                 <div className="card-body">
                   <span>{leader.period}</span>
                   <h3>{leader.name}</h3>
                   <p>{leader.note}</p>
-                  <a href="#kontak" onClick={(event) => scrollToSection(event, '#kontak')}>
-                    Hubungi pengurus
-                  </a>
                 </div>
               </article>
             ))}
@@ -290,15 +422,15 @@ function App() {
         </section>
 
         <section className="catalog-section" id="prestasi">
-          <div className="section-title">
+          <div className="section-title reveal-on-scroll">
             <p>Pencapaian</p>
             <h2>Prestasi Anggota dan UKM</h2>
             <span>Gunakan bagian ini untuk menampilkan rekam jejak lomba, festival, dan kontribusi UKM.</span>
           </div>
 
           <div className="card-grid three">
-            {achievements.map((achievement) => (
-              <article className="info-card" key={`${achievement.event}-${achievement.year}`}>
+            {achievements.map((achievement, index) => (
+              <article className="info-card reveal-on-scroll" key={`${achievement.event}-${achievement.year}`} style={{ '--reveal-delay': `${index * 90}ms` }}>
                 <div className="card-image mini red">
                   <strong>{achievement.year}</strong>
                 </div>
@@ -316,15 +448,37 @@ function App() {
         </section>
 
         <section className="gallery-section" id="galeri">
-          <div className="section-title">
-            <h2 className="gallery-heading">Galeri PSHT UPN"Veteran"Jawa Timur</h2>
+          <div className="section-title reveal-on-scroll">
+            <h2 className="gallery-heading">Galeri PSHT UPN "Veteran" Jawa Timur</h2>
           </div>
 
-          <div className="gallery-slider">
+          <div
+            className="gallery-slider reveal-on-scroll"
+            onMouseEnter={() => setGalleryPaused(true)}
+            onMouseLeave={() => setGalleryPaused(false)}
+            onFocus={() => setGalleryPaused(true)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) setGalleryPaused(false)
+            }}
+          >
             <figure className="gallery-slide">
-              <img src={gallery[activeGallerySlide].image} alt={`Dokumentasi ${gallery[activeGallerySlide].title}`} />
+              <button
+                className="gallery-image-button"
+                type="button"
+                aria-label={`Perbesar foto ${gallery[activeGallerySlide].title}`}
+                onClick={(event) => {
+                  lightboxTriggerRef.current = event.currentTarget
+                  setLightboxOpen(true)
+                }}
+              >
+                <img
+                  src={gallery[activeGallerySlide].image}
+                  alt={`Dokumentasi ${gallery[activeGallerySlide].title}`}
+                  decoding="async"
+                />
+              </button>
               <figcaption>
-                <span>Dokumentasi UKM PSHT</span>
+                <span>{gallery[activeGallerySlide].date}</span>
                 <strong>{gallery[activeGallerySlide].title}</strong>
               </figcaption>
             </figure>
@@ -370,17 +524,27 @@ function App() {
           </div>
 
           <div className="contact-panel">
-            <button className="contact-action whatsapp" type="button" onClick={() => setActivePopup('whatsapp')}>
+            <button
+              className="contact-action whatsapp"
+              type="button"
+              aria-haspopup="dialog"
+              onClick={(event) => openPopup(event, 'whatsapp')}
+            >
               <ContactIcon type="whatsapp" />
               WhatsApp 
             </button>
-            <button className="contact-action instagram" type="button" onClick={() => setActivePopup('instagram')}>
+            <button
+              className="contact-action instagram"
+              type="button"
+              aria-haspopup="dialog"
+              onClick={(event) => openPopup(event, 'instagram')}
+            >
               <ContactIcon type="instagram" />
               Instagram 
             </button>
             <div className="contact-info schedule">
               <small>Jadwal latihan</small>
-              <strong>Selasa dan Kamis, 19.22 WIB</strong>
+              <strong>Selasa dan Kamis, Pukul 19.22</strong>
             </div>
             <div className="contact-info location">
               <small>Lokasi</small>
