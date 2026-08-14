@@ -55,6 +55,12 @@ function App() {
   useScrollReveal(router.activeHash)
 
   useEffect(() => {
+    if (router.activeHash === '#admin') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    }
+  }, [router.activeHash])
+ 
+  useEffect(() => {
     fetch('/api/auth.php', { credentials: 'same-origin' })
       .then(async (response) => {
         if (!response.ok) throw new Error('Tidak dapat memeriksa sesi login.')
@@ -84,9 +90,19 @@ function App() {
     router.back(fallbackHash)
 
     window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        document.querySelector(fallbackHash)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      })
+      const target = document.querySelector(fallbackHash)
+      if (!target) return
+
+      const headerHeight = document.querySelector('.site-header')?.offsetHeight ?? 0
+      const sectionPaddingTop = Number.parseFloat(window.getComputedStyle(target).paddingTop) || 0
+      const contentGap = 24
+      const targetTop =
+        target.getBoundingClientRect().top +
+        window.scrollY -
+        headerHeight +
+        Math.max(0, sectionPaddingTop - contentGap)
+
+      window.scrollTo({ top: targetTop, behavior: 'auto' })
     })
   }
 
