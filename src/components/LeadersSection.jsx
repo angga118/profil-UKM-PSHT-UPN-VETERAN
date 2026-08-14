@@ -1,7 +1,6 @@
 import heroImg from '../assets/hero.png'
-import { leaders } from '../data/siteData'
 
-function LeadersSection() {
+function LeadersSection({ leaders }) {
   return (
     <section className="catalog-section soft-section" id="ketua">
       <div className="section-title reveal-on-scroll">

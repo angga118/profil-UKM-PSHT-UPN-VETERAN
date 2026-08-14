@@ -1,6 +1,5 @@
-import { gallery } from '../data/siteData'
-
 function GallerySection({
+  gallery,
   activeSlide,
   onSetActiveSlide,
   onPrevious,

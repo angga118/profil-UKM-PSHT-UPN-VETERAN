@@ -1,24 +1,19 @@
-import { trainingHighlights, trainingSchedule } from '../data/siteData'
-
-function LatihanRutin({ onBack }) {
+function LatihanRutin({ content, onBack }) {
   return (
     <main className="history-page">
       <header className="history-page-header">
-        <a className="history-back" href="#kontak" onClick={onBack}>
+        <a className="history-back" href="#sejarah" onClick={onBack}>
           &larr; Kembali ke beranda
         </a>
-        <p>Kegiatan</p>
-        <h1>Latihan Rutin UKM PSHT</h1>
-        <span>
-          Jadwal dan agenda latihan berikut adalah contoh gambaran umum. Sesuaikan dengan jadwal
-          resmi terbaru dari pengurus UKM.
-        </span>
+        <p>{content.eyebrow}</p>
+        <h1>{content.title}</h1>
+        <span>{content.description}</span>
       </header>
 
       <section className="history-page-content" aria-labelledby="training-schedule-title">
         <h2 id="training-schedule-title">Jadwal latihan</h2>
         <ol className="history-timeline">
-          {trainingSchedule.map((item) => (
+          {content.schedule.map((item) => (
             <li key={item.day}>
               <strong>{item.day}</strong>
               <div>
@@ -37,7 +32,7 @@ function LatihanRutin({ onBack }) {
       <section className="history-page-content" aria-labelledby="training-highlights-title">
         <h2 id="training-highlights-title">Fokus pembinaan</h2>
         <ol className="history-timeline">
-          {trainingHighlights.map((item) => (
+          {content.highlights.map((item) => (
             <li key={item.title}>
               <strong>&bull;</strong>
               <div>

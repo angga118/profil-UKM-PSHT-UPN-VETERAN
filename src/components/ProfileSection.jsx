@@ -1,20 +1,15 @@
 import heroImg from '../assets/hero.png'
-import { profileCards } from '../data/siteData'
-
-function ProfileSection({ onOpenDetail, onNavClick }) {
+function ProfileSection({ content, cards, onOpenDetail, onNavClick }) {
   return (
     <section className="catalog-section" id="sejarah">
       <div className="section-title reveal-on-scroll">
-        <p>Profil UKM</p>
-        <h2>Informasi Utama</h2>
-        <span>
-          Bagian ini merangkum sejarah, kegiatan, kepengurusan, prestasi, dan kontak UKM
-          dalam format ringkas seperti katalog informasi.
-        </span>
+        <p>{content.eyebrow}</p>
+        <h2>{content.title}</h2>
+        <span>{content.description}</span>
       </div>
 
       <div className="profile-grid">
-        {profileCards.map((card, index) => (
+        {cards.map((card, index) => (
           <article className="info-card feature-card reveal-on-scroll" key={card.title} style={{ '--reveal-delay': `${index * 90}ms` }}>
             <div className="card-image">
               <img src={heroImg} alt="" loading="lazy" decoding="async" />

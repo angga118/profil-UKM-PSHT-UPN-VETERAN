@@ -1,6 +1,4 @@
-import { achievements } from '../data/siteData'
-
-function AchievementsSection({ onNavClick }) {
+function AchievementsSection({ achievements, onNavClick }) {
   return (
     <section className="catalog-section" id="prestasi">
       <div className="section-title reveal-on-scroll">

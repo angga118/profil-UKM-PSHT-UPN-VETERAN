@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AchievementsSection from './components/AchievementsSection'
+import AdminLoginPage from './page/AdminLoginPage'
+import AdminPage from './page/AdminPage'
 import ContactPopup from './components/ContactPopup'
 import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
@@ -10,23 +12,27 @@ import Hero from './components/Hero'
 import LeadersSection from './components/LeadersSection'
 import ProfileSection from './components/ProfileSection'
 import WelcomeStrip from './components/WelcomeStrip'
-import { contactPopups, gallery } from './data/siteData'
+import { contactPopups } from './data/siteData'
 import { useDismissableDialog } from './hooks/useDismissableDialog'
 import { useGallerySlider } from './hooks/useGallerySlider'
 import { useHashRouter } from './hooks/useHashRouter'
 import { useScrollReveal } from './hooks/useScrollReveal'
+import { useSiteContent } from './hooks/useSiteContent'
 import HistoryPage from './page/HistoryPage'
 import LatihanRutin from './page/LatihanRutin'
 import './App.css'
 
 const detailPages = {
-  '#sejarah-detail': { Component: HistoryPage, fallbackHash: '#sejarah' },
-  '#latihan-rutin-detail': { Component: LatihanRutin, fallbackHash: '#kontak' },
+  '#sejarah-detail': { Component: HistoryPage, contentKey: 'history', fallbackHash: '#sejarah' },
+  '#latihan-rutin-detail': { Component: LatihanRutin, contentKey: 'training', fallbackHash: '#sejarah' },
 }
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activePopup, setActivePopup] = useState(null)
+  const { content, saveContent, resetContent } = useSiteContent()
+  const [admin, setAdmin] = useState(null)
+  const [authChecked, setAuthChecked] = useState(false)
 
   const router = useHashRouter()
   const activeDetailPage = router.activeHash ? detailPages[router.activeHash] : undefined
@@ -38,7 +44,8 @@ function App() {
     setLightboxOpen,
     goToPrevious,
     goToNext,
-  } = useGallerySlider(gallery.length)
+  } = useGallerySlider(content.gallery.length)
+  const visibleSlide = Math.min(activeSlide, content.gallery.length - 1)
 
   const { closeButtonRef: popupCloseButtonRef, triggerRef: popupTriggerRef } =
     useDismissableDialog(Boolean(activePopup), () => setActivePopup(null))
@@ -46,6 +53,17 @@ function App() {
     useDismissableDialog(lightboxOpen, () => setLightboxOpen(false))
 
   useScrollReveal(router.activeHash)
+
+  useEffect(() => {
+    fetch('/api/auth.php', { credentials: 'same-origin' })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Tidak dapat memeriksa sesi login.')
+        return response.json()
+      })
+      .then((data) => setAdmin(data.authenticated ? { username: data.username } : null))
+      .catch(() => setAdmin(null))
+      .finally(() => setAuthChecked(true))
+  }, [])
 
   const closeMenu = () => setMenuOpen(false)
   const popupContent = activePopup ? contactPopups[activePopup] : null
@@ -55,7 +73,10 @@ function App() {
     setActivePopup(popupType)
   }
 
-  const openDetailPage = (detailHash) => router.go(detailHash)
+  const openDetailPage = (detailHash) => {
+    router.go(detailHash)
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }))
+  }
 
   const closeDetailPage = (event) => {
     event.preventDefault()
@@ -63,7 +84,9 @@ function App() {
     router.back(fallbackHash)
 
     window.requestAnimationFrame(() => {
-      document.querySelector(fallbackHash)?.scrollIntoView({ behavior: 'smooth' })
+      window.requestAnimationFrame(() => {
+        document.querySelector(fallbackHash)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
     })
   }
 
@@ -95,9 +118,43 @@ function App() {
     window.history.pushState(null, '', href)
   }
 
+  const closeAdminPage = (event) => {
+    event.preventDefault()
+    router.go('#beranda')
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }))
+  }
+
+  const loginAdmin = async ({ username, password }) => {
+    const response = await fetch('/api/auth.php', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    })
+    const data = await response.json().catch(() => ({}))
+    if (!response.ok) throw new Error(data.message || 'Login gagal. Silakan coba lagi.')
+    setAdmin({ username: data.username })
+  }
+
+  const logoutAdmin = async () => {
+    await fetch('/api/auth.php', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'logout' }),
+    })
+    setAdmin(null)
+  }
+
+  if (router.activeHash === '#admin') {
+    if (!authChecked) return <main className="admin-login-page"><p className="admin-auth-loading">Memeriksa sesi admin...</p></main>
+    if (!admin) return <AdminLoginPage onLogin={loginAdmin} onBack={closeAdminPage} />
+    return <AdminPage content={content} onBack={closeAdminPage} onSave={saveContent} onReset={resetContent} adminName={admin.username} onLogout={logoutAdmin} />
+  }
+
   if (activeDetailPage) {
     const { Component } = activeDetailPage
-    return <Component onBack={closeDetailPage} />
+    return <Component content={content[activeDetailPage.contentKey]} onBack={closeDetailPage} />
   }
 
   return (
@@ -112,22 +169,34 @@ function App() {
 
       {lightboxOpen && (
         <GalleryLightbox
-          item={gallery[activeSlide]}
+          item={content.gallery[visibleSlide]}
           closeButtonRef={lightboxCloseButtonRef}
           onClose={() => setLightboxOpen(false)}
         />
       )}
 
-      <Header menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((isOpen) => !isOpen)} onNavClick={scrollToSection} />
+      <Header
+        menuOpen={menuOpen}
+        onToggleMenu={() => setMenuOpen((isOpen) => !isOpen)}
+        onNavClick={scrollToSection}
+      />
+      <button
+        className={menuOpen ? 'nav-backdrop open' : 'nav-backdrop'}
+        type="button"
+        aria-label="Tutup menu navigasi"
+        tabIndex={menuOpen ? 0 : -1}
+        onClick={closeMenu}
+      />
 
       <main>
-        <Hero onNavClick={scrollToSection} />
-        <WelcomeStrip />
-        <ProfileSection onOpenDetail={openDetailPage} onNavClick={scrollToSection} />
-        <LeadersSection />
-        <AchievementsSection onNavClick={scrollToSection} />
+        <Hero content={content.hero} onNavClick={scrollToSection} />
+        <WelcomeStrip content={content.welcome} />
+        <ProfileSection content={content.profile} cards={content.profileCards} onOpenDetail={openDetailPage} onNavClick={scrollToSection} />
+        <LeadersSection leaders={content.leaders} />
+        <AchievementsSection achievements={content.achievements} onNavClick={scrollToSection} />
         <GallerySection
-          activeSlide={activeSlide}
+          gallery={content.gallery}
+          activeSlide={visibleSlide}
           onSetActiveSlide={setActiveSlide}
           onPrevious={goToPrevious}
           onNext={goToNext}

@@ -1,24 +1,19 @@
-import { historyTimeline } from '../data/siteData'
-
-function HistoryPage({ onBack }) {
+function HistoryPage({ content, onBack }) {
   return (
     <main className="history-page">
       <header className="history-page-header">
         <a className="history-back" href="#sejarah" onClick={onBack}>
           &larr; Kembali ke beranda
         </a>
-        <p>Contoh konten</p>
-        <h1>Sejarah UKM PSHT</h1>
-        <span>
-          Halaman ini adalah dummy. Ganti tahun dan narasinya setelah data organisasi telah
-          dikonfirmasi.
-        </span>
+        <p>{content.eyebrow}</p>
+        <h1>{content.title}</h1>
+        <span>{content.description}</span>
       </header>
 
       <section className="history-page-content" aria-labelledby="history-timeline-title">
         <h2 id="history-timeline-title">Perjalanan organisasi</h2>
         <ol className="history-timeline">
-          {historyTimeline.map((item) => (
+          {content.timeline.map((item) => (
             <li key={item.year}>
               <strong>{item.year}</strong>
               <div>

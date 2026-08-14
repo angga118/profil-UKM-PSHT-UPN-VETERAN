@@ -130,3 +130,37 @@ export const historyTimeline = [
     text: 'UKM terus menjadi wadah latihan, pengembangan karakter, dan partisipasi mahasiswa dalam kegiatan kampus maupun kejuaraan.',
   },
 ]
+
+export const editableContentDefaults = {
+  hero: {
+    eyebrow: 'Persaudaraan Setia Hati Terate',
+    title: 'UKM PSHT UPN "Veteran" Jawa Timur',
+    description: 'Tangguh Dalam Aksi, Unggul Dalam Prestasi',
+  },
+  welcome: {
+    title: 'Selamat Datang',
+    text: 'di landing page resmi UKM PSHT UPN "Veteran" Jawa Timur',
+  },
+  profile: {
+    eyebrow: 'Profil UKM',
+    title: 'Informasi Utama',
+    description: 'Bagian ini merangkum sejarah, kegiatan, kepengurusan, prestasi, dan kontak UKM dalam format ringkas seperti katalog informasi.',
+  },
+  profileCards,
+  history: {
+    eyebrow: 'Contoh konten',
+    title: 'Sejarah UKM PSHT',
+    description: 'Halaman ini adalah dummy. Ganti tahun dan narasinya setelah data organisasi telah dikonfirmasi.',
+    timeline: historyTimeline,
+  },
+  training: {
+    eyebrow: 'Kegiatan',
+    title: 'Latihan Rutin UKM PSHT',
+    description: 'Jadwal dan agenda latihan berikut adalah contoh gambaran umum. Sesuaikan dengan jadwal resmi terbaru dari pengurus UKM.',
+    schedule: trainingSchedule,
+    highlights: trainingHighlights,
+  },
+  leaders,
+  achievements,
+  gallery,
+}

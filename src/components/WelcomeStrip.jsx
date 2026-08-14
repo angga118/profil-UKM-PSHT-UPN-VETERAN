@@ -1,8 +1,8 @@
-function WelcomeStrip() {
+function WelcomeStrip({ content }) {
   return (
     <section className="welcome-strip" aria-label="Sambutan">
-      <strong>Selamat Datang</strong>
-      <span>di landing page resmi UKM PSHT UPN "Veteran" Jawa Timur</span>
+      <strong>{content.title}</strong>
+      <span>{content.text}</span>
     </section>
   )
 }

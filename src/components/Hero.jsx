@@ -1,6 +1,6 @@
 import heroGroupImg from '../assets/hero-group.jpg'
 
-function Hero({ onNavClick }) {
+function Hero({ content, onNavClick }) {
   return (
     <section
       className="hero-section"
@@ -8,9 +8,9 @@ function Hero({ onNavClick }) {
       style={{ '--hero-photo': `url(${heroGroupImg})` }}
     >
       <div className="hero-overlay">
-        <p>Persaudaraan Setia Hati Terate</p>
-        <h1>UKM PSHT UPN "Veteran" Jawa Timur</h1>
-        <span>Tangguh Dalam Aksi, Unggul Dalam Prestasi PSHT KOMISARIAT UPN VETERAN JAWA TIMUR, JAYA!!!</span>
+        <p>{content.eyebrow}</p>
+        <h1>{content.title}</h1>
+        <span>{content.description}</span>
         <a href="#kontak" onClick={(event) => onNavClick(event, '#kontak')}>
           Bergabung Sekarang
         </a>

@@ -37,7 +37,7 @@ function ContactSection({ onOpenPopup }) {
         </div>
         <div className="contact-info location">
           <small>Lokasi</small>
-          <strong>Lapangan Depan Rektorat UPN "Veteran" Jawa Timur</strong>
+          <strong>Lapangan Basket Depan Rektorat UPN "Veteran" Jawa Timur</strong>
         </div>
       </div>
     </section>
