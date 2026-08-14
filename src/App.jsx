@@ -134,6 +134,7 @@ function App() {
     const data = await response.json().catch(() => ({}))
     if (!response.ok) throw new Error(data.message || 'Login gagal. Silakan coba lagi.')
     setAdmin({ username: data.username })
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }))
   }
 
   const logoutAdmin = async () => {

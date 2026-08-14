@@ -3,6 +3,7 @@ import { useState } from 'react'
 function AdminLoginPage({ onLogin, onBack }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [passwordVisible, setPasswordVisible] = useState(false)
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -42,13 +43,24 @@ function AdminLoginPage({ onLogin, onBack }) {
           </label>
           <label>
             Password
-            <input
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
+            <span className="password-field">
+              <input
+                type={passwordVisible ? 'text' : 'password'}
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                aria-label={passwordVisible ? 'Sembunyikan password' : 'Tampilkan password'}
+                aria-pressed={passwordVisible}
+                onClick={() => setPasswordVisible((visible) => !visible)}
+              >
+                {passwordVisible ? '◉' : '◌'}
+              </button>
+            </span>
           </label>
           {message && <p className="admin-login-error" role="alert">{message}</p>}
           <button type="submit" className="admin-login-submit" disabled={submitting}>
