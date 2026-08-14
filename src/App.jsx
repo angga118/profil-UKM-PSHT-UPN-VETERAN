@@ -1,204 +1,72 @@
-import { useEffect, useRef, useState } from 'react'
-import heroImg from './assets/hero.png'
-import heroGroupImg from './assets/hero-group.jpg'
-import instagramLogo from './assets/instagram-logo.svg'
-import kejuaraanImg from './assets/kejuaraan.jpeg'
-import logoImg from './assets/psht-logo.jpg'
-import pengesahanImg from './assets/pengesahan.jpeg'
-import whatsappLogo from './assets/whatsapp-logo.svg'
-import HistoryPage from './HistoryPage'
+import { useState } from 'react'
+import AchievementsSection from './components/AchievementsSection'
+import ContactPopup from './components/ContactPopup'
+import ContactSection from './components/ContactSection'
+import Footer from './components/Footer'
+import GalleryLightbox from './components/GalleryLightbox'
+import GallerySection from './components/GallerySection'
+import Header from './components/Header'
+import Hero from './components/Hero'
+import LeadersSection from './components/LeadersSection'
+import ProfileSection from './components/ProfileSection'
+import WelcomeStrip from './components/WelcomeStrip'
+import { contactPopups, gallery } from './data/siteData'
+import { useDismissableDialog } from './hooks/useDismissableDialog'
+import { useGallerySlider } from './hooks/useGallerySlider'
+import { useHashRouter } from './hooks/useHashRouter'
+import { useScrollReveal } from './hooks/useScrollReveal'
+import HistoryPage from './page/HistoryPage'
+import LatihanRutin from './page/LatihanRutin'
 import './App.css'
 
-const navItems = [
-  { label: 'Beranda', href: '#beranda' },
-  { label: 'Sejarah', href: '#sejarah' },
-  { label: 'Ketua', href: '#ketua' },
-  { label: 'Prestasi', href: '#prestasi' },
-  { label: 'Galeri', href: '#galeri' },
-  { label: 'Kontak', href: '#kontak' },
-]
-
-const profileCards = [
-  {
-    title: 'Sejarah UKM',
-    eyebrow: 'Profil',
-    text: 'Narasi berdirinya UKM, nilai persaudaraan, dan perjalanan PSHT di lingkungan UPN "Veteran" Jawa Timur.',
-    points: ['Tahun berdiri', 'Tokoh perintis', 'Filosofi latihan'],
-    href: '#sejarah',
-  },
-  {
-    title: 'Latihan Rutin',
-    eyebrow: 'Kegiatan',
-    text: 'Informasi jadwal latihan, lokasi berkumpul, dan agenda pembinaan anggota aktif.',
-    points: ['Selasa dan Kamis', 'Pendampingan pelatih', 'Pembinaan fisik dan teknik'],
-    href: '#kontak',
-  },
-]
-
-const leaders = [
-  { name: 'Nama Ketua Saat Ini', period: '2025-2026', note: 'Penguatan kaderisasi dan kegiatan kampus' },
-  { name: 'Nama Ketua Periode Lalu', period: '2024-2025', note: 'Aktivasi latihan rutin dan agenda silaturahmi' },
-  { name: 'Nama Ketua Pendahulu', period: '2023-2024', note: 'Pendataan anggota dan peningkatan prestasi' },
-  { name: 'Nama Ketua Pendahulu', period: '2022-2023', note: 'Regenerasi pengurus dan dokumentasi UKM' },
-]
-
-const achievements = [
-  {
-    event: 'Kejuaraan Pencak Silat Mahasiswa',
-    year: '2025',
-    result: 'Juara 1 Tanding Kelas Putra',
-  },
-  {
-    event: 'Pekan Olahraga Mahasiswa Daerah',
-    year: '2024',
-    result: 'Medali Perak Kategori Seni Tunggal',
-  },
-  {
-    event: 'Festival UKM Bela Diri UPN',
-    year: '2024',
-    result: 'Penampilan Terbaik Demonstrasi Jurus',
-  },
-]
-
-const gallery = [
-  { title: 'Foto kabinet', date: 'Dokumentasi kepengurusan', image: heroGroupImg },
-  { title: 'Pengesahan warga baru 2026', date: 'Kegiatan organisasi · 2026', image: pengesahanImg },
-  { title: 'Kejuaraan Airlangga Cup 2026', date: 'Kejuaraan · 2026', image: kejuaraanImg },
-]
-
-const contactPopups = {
-  whatsapp: {
-    title: 'WhatsApp Pengurus',
-    text: 'Hubungi pengurus UKM PSHT untuk bertanya jadwal latihan, pendaftaran, atau agenda anggota baru.',
-    action: 'Buka WhatsApp',
-    href: 'https://wa.me/6281555861168',
-    icon: 'whatsapp',
-  },
-  instagram: {
-    title: 'Instagram Resmi',
-    text: 'Lihat dokumentasi kegiatan, informasi latihan, dan kabar terbaru dari UKM PSHT UPN.',
-    action: 'Buka Instagram',
-    href: 'https://www.instagram.com/psht_upn?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
-    icon: 'instagram',
-  },
-}
-
-function ContactIcon({ type }) {
-  const iconSrc = type === 'instagram' ? instagramLogo : whatsappLogo
-
-  return <img className="contact-icon" src={iconSrc} alt="" aria-hidden="true" />
+const detailPages = {
+  '#sejarah-detail': { Component: HistoryPage, fallbackHash: '#sejarah' },
+  '#latihan-rutin-detail': { Component: LatihanRutin, fallbackHash: '#kontak' },
 }
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activePopup, setActivePopup] = useState(null)
-  const [activeGallerySlide, setActiveGallerySlide] = useState(0)
-  const [isHistoryPage, setIsHistoryPage] = useState(false)
-  const [galleryPaused, setGalleryPaused] = useState(false)
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const popupCloseButtonRef = useRef(null)
-  const popupTriggerRef = useRef(null)
-  const lightboxCloseButtonRef = useRef(null)
-  const lightboxTriggerRef = useRef(null)
 
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReducedMotion || galleryPaused || lightboxOpen) return undefined
+  const router = useHashRouter()
+  const activeDetailPage = router.activeHash ? detailPages[router.activeHash] : undefined
+  const {
+    activeSlide,
+    setActiveSlide,
+    setPaused,
+    lightboxOpen,
+    setLightboxOpen,
+    goToPrevious,
+    goToNext,
+  } = useGallerySlider(gallery.length)
 
-    const sliderInterval = window.setInterval(() => {
-      setActiveGallerySlide((currentSlide) => (currentSlide + 1) % gallery.length)
-    }, 4500)
+  const { closeButtonRef: popupCloseButtonRef, triggerRef: popupTriggerRef } =
+    useDismissableDialog(Boolean(activePopup), () => setActivePopup(null))
+  const { closeButtonRef: lightboxCloseButtonRef, triggerRef: lightboxTriggerRef } =
+    useDismissableDialog(lightboxOpen, () => setLightboxOpen(false))
 
-    return () => window.clearInterval(sliderInterval)
-  }, [galleryPaused, lightboxOpen])
-
-  useEffect(() => {
-    if (!activePopup) return undefined
-
-    const closePopupWithKeyboard = (event) => {
-      if (event.key === 'Escape') {
-        setActivePopup(null)
-      }
-    }
-
-    document.addEventListener('keydown', closePopupWithKeyboard)
-    popupCloseButtonRef.current?.focus()
-
-    return () => {
-      document.removeEventListener('keydown', closePopupWithKeyboard)
-      popupTriggerRef.current?.focus()
-    }
-  }, [activePopup])
-
-  useEffect(() => {
-    const updateHistoryPage = () => setIsHistoryPage(window.location.hash === '#sejarah-detail')
-    updateHistoryPage()
-    window.addEventListener('hashchange', updateHistoryPage)
-
-    return () => {
-      window.removeEventListener('hashchange', updateHistoryPage)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!lightboxOpen) return undefined
-
-    const closeLightboxWithKeyboard = (event) => {
-      if (event.key === 'Escape') setLightboxOpen(false)
-    }
-
-    document.addEventListener('keydown', closeLightboxWithKeyboard)
-    lightboxCloseButtonRef.current?.focus()
-
-    return () => {
-      document.removeEventListener('keydown', closeLightboxWithKeyboard)
-      lightboxTriggerRef.current?.focus()
-    }
-  }, [lightboxOpen])
-
-  useEffect(() => {
-    const revealItems = document.querySelectorAll('.reveal-on-scroll')
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    if (prefersReducedMotion || !('IntersectionObserver' in window)) {
-      revealItems.forEach((item) => item.classList.add('is-visible'))
-      return undefined
-    }
-
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return
-          entry.target.classList.add('is-visible')
-          revealObserver.unobserve(entry.target)
-        })
-      },
-      { threshold: 0.12 },
-    )
-
-    revealItems.forEach((item) => revealObserver.observe(item))
-    return () => revealObserver.disconnect()
-  }, [isHistoryPage])
+  useScrollReveal(router.activeHash)
 
   const closeMenu = () => setMenuOpen(false)
   const popupContent = activePopup ? contactPopups[activePopup] : null
+
   const openPopup = (event, popupType) => {
     popupTriggerRef.current = event.currentTarget
     setActivePopup(popupType)
   }
-  const openHistory = () => {
-    window.history.pushState(null, '', '#sejarah-detail')
-    setIsHistoryPage(true)
-  }
-  const closeHistory = (event) => {
+
+  const openDetailPage = (detailHash) => router.go(detailHash)
+
+  const closeDetailPage = (event) => {
     event.preventDefault()
-    window.history.pushState(null, '', '#sejarah')
-    setIsHistoryPage(false)
+    const fallbackHash = activeDetailPage?.fallbackHash ?? '#beranda'
+    router.back(fallbackHash)
 
     window.requestAnimationFrame(() => {
-      document.querySelector('#sejarah')?.scrollIntoView({ behavior: 'smooth' })
+      document.querySelector(fallbackHash)?.scrollIntoView({ behavior: 'smooth' })
     })
   }
+
   const scrollToSection = (event, href) => {
     if (!href.startsWith('#')) return
 
@@ -227,337 +95,52 @@ function App() {
     window.history.pushState(null, '', href)
   }
 
-  if (isHistoryPage) return <HistoryPage onBack={closeHistory} />
+  if (activeDetailPage) {
+    const { Component } = activeDetailPage
+    return <Component onBack={closeDetailPage} />
+  }
 
   return (
     <div className="site-shell">
       {popupContent && (
-        <div className="contact-popup-backdrop" onClick={() => setActivePopup(null)}>
-          <div
-            className="contact-popup"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="contact-popup-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              className="contact-popup-close"
-              type="button"
-              aria-label="Tutup pop up"
-              ref={popupCloseButtonRef}
-              onClick={() => setActivePopup(null)}
-            >
-              &times;
-            </button>
-            <p>Kontak UKM</p>
-            <h3 id="contact-popup-title">{popupContent.title}</h3>
-            <span>{popupContent.text}</span>
-            <a href={popupContent.href} target="_blank" rel="noreferrer">
-              <ContactIcon type={popupContent.icon} />
-              {popupContent.action}
-            </a>
-          </div>
-        </div>
+        <ContactPopup
+          content={popupContent}
+          closeButtonRef={popupCloseButtonRef}
+          onClose={() => setActivePopup(null)}
+        />
       )}
 
       {lightboxOpen && (
-        <div className="gallery-lightbox-backdrop" onClick={() => setLightboxOpen(false)}>
-          <div
-            className="gallery-lightbox"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="gallery-lightbox-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              className="gallery-lightbox-close"
-              type="button"
-              aria-label="Tutup tampilan foto"
-              ref={lightboxCloseButtonRef}
-              onClick={() => setLightboxOpen(false)}
-            >
-              &times;
-            </button>
-            <img src={gallery[activeGallerySlide].image} alt={`Dokumentasi ${gallery[activeGallerySlide].title}`} />
-            <div>
-              <span>{gallery[activeGallerySlide].date}</span>
-              <strong id="gallery-lightbox-title">{gallery[activeGallerySlide].title}</strong>
-            </div>
-          </div>
-        </div>
+        <GalleryLightbox
+          item={gallery[activeSlide]}
+          closeButtonRef={lightboxCloseButtonRef}
+          onClose={() => setLightboxOpen(false)}
+        />
       )}
 
-      <header className="site-header">
-        <a
-          className="brand"
-          href="#beranda"
-          aria-label='UKM PSHT UPN "Veteran" Jawa Timur'
-          onClick={(event) => scrollToSection(event, '#beranda')}
-        >
-          <span className="brand-logo-frame">
-            <img className="brand-logo" src={logoImg} alt='Logo UKM PSHT UPN "Veteran" Jawa Timur' />
-          </span>
-          <span>
-            <strong>UKM PSHT</strong>
-            <small>UPN "Veteran" Jatim</small>
-          </span>
-        </a>
-
-        <button
-          className="menu-button"
-          type="button"
-          aria-label="Buka menu navigasi"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((isOpen) => !isOpen)}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <nav className={menuOpen ? 'nav-links open' : 'nav-links'} aria-label="Navigasi utama">
-          {navItems.map((item) => (
-            <a key={item.href} href={item.href} onClick={(event) => scrollToSection(event, item.href)}>
-              {item.label}
-            </a>
-          ))}
-        </nav>
-      </header>
+      <Header menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((isOpen) => !isOpen)} onNavClick={scrollToSection} />
 
       <main>
-        <section
-          className="hero-section"
-          id="beranda"
-          style={{ '--hero-photo': `url(${heroGroupImg})` }}
-        >
-          <div className="hero-overlay">
-            <p>Persaudaraan Setia Hati Terate</p>
-            <h1>UKM PSHT UPN "Veteran" Jawa Timur</h1>
-            <span>Tangguh Dalam Aksi, Unggul Dalam Prestasi PSHT KOMISARIAT UPN VETERAN JAWA TIMUR, JAYA!!!</span>
-            <a href="#kontak" onClick={(event) => scrollToSection(event, '#kontak')}>
-              Bergabung Sekarang
-            </a>
-          </div>
-        </section>
-
-        <section className="welcome-strip" aria-label="Sambutan">
-          <strong>Selamat Datang</strong>
-          <span>di landing page resmi UKM PSHT UPN "Veteran" Jawa Timur</span>
-        </section>
-
-        <section className="catalog-section" id="sejarah">
-          <div className="section-title reveal-on-scroll">
-            <p>Profil UKM</p>
-            <h2>Informasi Utama</h2>
-            <span>
-              Bagian ini merangkum sejarah, kegiatan, kepengurusan, prestasi, dan kontak UKM
-              dalam format ringkas seperti katalog informasi.
-            </span>
-          </div>
-
-          <div className="profile-grid">
-            {profileCards.map((card, index) => (
-              <article className="info-card feature-card reveal-on-scroll" key={card.title} style={{ '--reveal-delay': `${index * 90}ms` }}>
-                <div className="card-image">
-                  <img src={heroImg} alt="" loading="lazy" decoding="async" />
-                </div>
-                <div className="card-body">
-                  <span>{card.eyebrow}</span>
-                  <h3>{card.title}</h3>
-                  <p>{card.text}</p>
-                  <ul>
-                    {card.points.map((point) => (
-                      <li key={point}>{point}</li>
-                    ))}
-                  </ul>
-                  <a
-                    href={card.href}
-                    onClick={(event) => {
-                      if (card.title === 'Sejarah UKM') {
-                        event.preventDefault()
-                        openHistory()
-                      }
-                      else scrollToSection(event, card.href)
-                    }}
-                  >
-                    Lihat detail
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="history-panel reveal-on-scroll">
-            <h3>Sejarah Singkat</h3>
-            <p>
-              UKM PSHT UPN "Veteran" Jawa Timur menjadi ruang pembinaan mahasiswa yang ingin
-              mendalami pencak silat sekaligus nilai budi pekerti, keberanian, dan tanggung jawab.
-              Narasi lengkap sejarah UKM, tahun berdiri, tokoh perintis, dan perjalanan organisasi
-              dapat ditempatkan pada bagian ini saat data resmi sudah tersedia.
-            </p>
-          </div>
-        </section>
-
-        <section className="catalog-section soft-section" id="ketua">
-          <div className="section-title reveal-on-scroll">
-            <p>Regenerasi</p>
-            <h2>Daftar Ketua UKM</h2>
-            <span>Urutan dibuat dari periode terbaru agar pengunjung melihat kepengurusan terkini.</span>
-          </div>
-
-          <div className="card-grid">
-            {leaders.map((leader, index) => (
-              <article className="info-card reveal-on-scroll" key={`${leader.name}-${leader.period}`} style={{ '--reveal-delay': `${index * 80}ms` }}>
-                <div className="card-image mini">
-                  <img src={heroImg} alt="" loading="lazy" decoding="async" />
-                </div>
-                <div className="card-body">
-                  <span>{leader.period}</span>
-                  <h3>{leader.name}</h3>
-                  <p>{leader.note}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="catalog-section" id="prestasi">
-          <div className="section-title reveal-on-scroll">
-            <p>Pencapaian</p>
-            <h2>Prestasi Anggota dan UKM</h2>
-            <span>Gunakan bagian ini untuk menampilkan rekam jejak lomba, festival, dan kontribusi UKM.</span>
-          </div>
-
-          <div className="card-grid three">
-            {achievements.map((achievement, index) => (
-              <article className="info-card reveal-on-scroll" key={`${achievement.event}-${achievement.year}`} style={{ '--reveal-delay': `${index * 90}ms` }}>
-                <div className="card-image mini red">
-                  <strong>{achievement.year}</strong>
-                </div>
-                <div className="card-body">
-                  <span>Prestasi</span>
-                  <h3>{achievement.event}</h3>
-                  <p>{achievement.result}</p>
-                  <a href="#kontak" onClick={(event) => scrollToSection(event, '#kontak')}>
-                    Lihat detail
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="gallery-section" id="galeri">
-          <div className="section-title reveal-on-scroll">
-            <h2 className="gallery-heading">Galeri PSHT UPN "Veteran" Jawa Timur</h2>
-          </div>
-
-          <div
-            className="gallery-slider reveal-on-scroll"
-            onMouseEnter={() => setGalleryPaused(true)}
-            onMouseLeave={() => setGalleryPaused(false)}
-            onFocus={() => setGalleryPaused(true)}
-            onBlur={(event) => {
-              if (!event.currentTarget.contains(event.relatedTarget)) setGalleryPaused(false)
-            }}
-          >
-            <figure className="gallery-slide">
-              <button
-                className="gallery-image-button"
-                type="button"
-                aria-label={`Perbesar foto ${gallery[activeGallerySlide].title}`}
-                onClick={(event) => {
-                  lightboxTriggerRef.current = event.currentTarget
-                  setLightboxOpen(true)
-                }}
-              >
-                <img
-                  src={gallery[activeGallerySlide].image}
-                  alt={`Dokumentasi ${gallery[activeGallerySlide].title}`}
-                  decoding="async"
-                />
-              </button>
-              <figcaption>
-                <span>{gallery[activeGallerySlide].date}</span>
-                <strong>{gallery[activeGallerySlide].title}</strong>
-              </figcaption>
-            </figure>
-            <button
-              className="gallery-slider-button previous"
-              type="button"
-              aria-label="Dokumentasi sebelumnya"
-              onClick={() => setActiveGallerySlide((currentSlide) => (currentSlide - 1 + gallery.length) % gallery.length)}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7" /></svg>
-            </button>
-            <button
-              className="gallery-slider-button next"
-              type="button"
-              aria-label="Dokumentasi berikutnya"
-              onClick={() => setActiveGallerySlide((currentSlide) => (currentSlide + 1) % gallery.length)}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 5 7 7-7 7" /></svg>
-            </button>
-            <div className="gallery-slider-dots" aria-label="Pilih dokumentasi kegiatan">
-              {gallery.map((item, index) => (
-                <button
-                  key={item.title}
-                  className={index === activeGallerySlide ? 'active' : ''}
-                  type="button"
-                  aria-label={`Tampilkan ${item.title}`}
-                  aria-current={index === activeGallerySlide ? 'true' : undefined}
-                  onClick={() => setActiveGallerySlide(index)}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="contact-section" id="kontak">
-          <div className="contact-copy">
-            <p>Kontak</p>
-            <h2>Ingin ikut latihan atau bertanya soal pendaftaran?</h2>
-            <span>
-              Hubungi pengurus UKM untuk jadwal latihan, lokasi kumpul, dan informasi penerimaan
-              anggota baru.
-            </span>
-          </div>
-
-          <div className="contact-panel">
-            <button
-              className="contact-action whatsapp"
-              type="button"
-              aria-haspopup="dialog"
-              onClick={(event) => openPopup(event, 'whatsapp')}
-            >
-              <ContactIcon type="whatsapp" />
-              WhatsApp 
-            </button>
-            <button
-              className="contact-action instagram"
-              type="button"
-              aria-haspopup="dialog"
-              onClick={(event) => openPopup(event, 'instagram')}
-            >
-              <ContactIcon type="instagram" />
-              Instagram 
-            </button>
-            <div className="contact-info schedule">
-              <small>Jadwal latihan</small>
-              <strong>Selasa dan Kamis, Pukul 19.22</strong>
-            </div>
-            <div className="contact-info location">
-              <small>Lokasi</small>
-              <strong> Depan Rektorat UPN "Veteran" Jawa Timur</strong>
-            </div>
-          </div>
-        </section>
+        <Hero onNavClick={scrollToSection} />
+        <WelcomeStrip />
+        <ProfileSection onOpenDetail={openDetailPage} onNavClick={scrollToSection} />
+        <LeadersSection />
+        <AchievementsSection onNavClick={scrollToSection} />
+        <GallerySection
+          activeSlide={activeSlide}
+          onSetActiveSlide={setActiveSlide}
+          onPrevious={goToPrevious}
+          onNext={goToNext}
+          onPauseChange={setPaused}
+          onOpenLightbox={(triggerEl) => {
+            lightboxTriggerRef.current = triggerEl
+            setLightboxOpen(true)
+          }}
+        />
+        <ContactSection onOpenPopup={openPopup} />
       </main>
 
-      <footer className="site-footer">
-        <span>UKM PSHT UPN "Veteran" Jawa Timur</span>
-        <span>Design by Angga</span>
-      </footer>
+      <Footer />
     </div>
   )
 }

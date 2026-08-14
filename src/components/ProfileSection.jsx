@@ -1,0 +1,51 @@
+import heroImg from '../assets/hero.png'
+import { profileCards } from '../data/siteData'
+
+function ProfileSection({ onOpenDetail, onNavClick }) {
+  return (
+    <section className="catalog-section" id="sejarah">
+      <div className="section-title reveal-on-scroll">
+        <p>Profil UKM</p>
+        <h2>Informasi Utama</h2>
+        <span>
+          Bagian ini merangkum sejarah, kegiatan, kepengurusan, prestasi, dan kontak UKM
+          dalam format ringkas seperti katalog informasi.
+        </span>
+      </div>
+
+      <div className="profile-grid">
+        {profileCards.map((card, index) => (
+          <article className="info-card feature-card reveal-on-scroll" key={card.title} style={{ '--reveal-delay': `${index * 90}ms` }}>
+            <div className="card-image">
+              <img src={heroImg} alt="" loading="lazy" decoding="async" />
+            </div>
+            <div className="card-body">
+              <span>{card.eyebrow}</span>
+              <h3>{card.title}</h3>
+              <p>{card.text}</p>
+              <ul>
+                {card.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+              <a
+                href={card.detailRoute ?? card.href}
+                onClick={(event) => {
+                  if (card.detailRoute) {
+                    event.preventDefault()
+                    onOpenDetail(card.detailRoute)
+                  }
+                  else onNavClick(event, card.href)
+                }}
+              >
+                Lihat detail
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+export default ProfileSection

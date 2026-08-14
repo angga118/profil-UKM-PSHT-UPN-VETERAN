@@ -1,25 +1,4 @@
-const historyTimeline = [
-  {
-    year: '2018',
-    title: 'Awal pembentukan komunitas',
-    text: 'Sejumlah mahasiswa mulai membentuk kelompok latihan pencak silat berbasis nilai persaudaraan di lingkungan kampus.',
-  },
-  {
-    year: '2020',
-    title: 'Penguatan kegiatan latihan',
-    text: 'Latihan rutin, pembinaan teknik, dan kegiatan silaturahmi mulai disusun lebih terarah untuk anggota.',
-  },
-  {
-    year: '2023',
-    title: 'Regenerasi kepengurusan',
-    text: 'Kepengurusan memperluas dokumentasi kegiatan serta membuka ruang kaderisasi bagi mahasiswa baru.',
-  },
-  {
-    year: 'Sekarang',
-    title: 'Pembinaan dan prestasi',
-    text: 'UKM terus menjadi wadah latihan, pengembangan karakter, dan partisipasi mahasiswa dalam kegiatan kampus maupun kejuaraan.',
-  },
-]
+import { historyTimeline } from '../data/siteData'
 
 function HistoryPage({ onBack }) {
   return (
