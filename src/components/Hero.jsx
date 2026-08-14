@@ -1,9 +1,17 @@
 import heroGroupImg from '../assets/hero-group.jpg'
+import { useEffect, useState } from 'react'
 
 function Hero({ content, onNavClick }) {
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setIsReady(true))
+    return () => window.cancelAnimationFrame(frame)
+  }, [])
+
   return (
     <section
-      className="hero-section"
+      className={isReady ? 'hero-section hero-animate' : 'hero-section'}
       id="beranda"
       style={{ '--hero-photo': `url(${heroGroupImg})` }}
     >
