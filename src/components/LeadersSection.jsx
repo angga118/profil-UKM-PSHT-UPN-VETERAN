@@ -13,7 +13,7 @@ function LeadersSection({ leaders }) {
         {leaders.map((leader, index) => (
           <article className="info-card reveal-on-scroll" key={`${leader.name}-${leader.period}`} style={{ '--reveal-delay': `${index * 80}ms` }}>
             <div className="card-image mini">
-              <img src={heroImg} alt="" loading="lazy" decoding="async" />
+            <img src={leader.image || heroImg} alt={leader.name} loading="lazy" decoding="async" />
             </div>
             <div className="card-body">
               <span>{leader.period}</span>

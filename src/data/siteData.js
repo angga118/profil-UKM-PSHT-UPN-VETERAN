@@ -31,10 +31,10 @@ export const profileCards = [
 ]
 
 export const leaders = [
-  { name: 'Nama Ketua Saat Ini', period: '2025-2026', note: 'Penguatan kaderisasi dan kegiatan kampus' },
-  { name: 'Nama Ketua Periode Lalu', period: '2024-2025', note: 'Aktivasi latihan rutin dan agenda silaturahmi' },
-  { name: 'Nama Ketua Pendahulu', period: '2023-2024', note: 'Pendataan anggota dan peningkatan prestasi' },
-  { name: 'Nama Ketua Pendahulu', period: '2022-2023', note: 'Regenerasi pengurus dan dokumentasi UKM' },
+  { name: 'Nama Ketua Saat Ini', period: '2025-2026', note: 'Penguatan kaderisasi dan kegiatan kampus', image: '' },
+  { name: 'Nama Ketua Periode Lalu', period: '2024-2025', note: 'Aktivasi latihan rutin dan agenda silaturahmi', image: '' },
+  { name: 'Nama Ketua Pendahulu', period: '2023-2024', note: 'Pendataan anggota dan peningkatan prestasi', image: '' },
+  { name: 'Nama Ketua Pendahulu', period: '2022-2023', note: 'Regenerasi pengurus dan dokumentasi UKM', image: '' },
 ]
 
 export const achievements = [

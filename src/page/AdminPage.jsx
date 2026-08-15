@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 const emptyGalleryItem = { title: '', date: '', image: '' }
-const emptyLeader = { name: '', period: '', note: '' }
+const emptyLeader = { name: '', period: '', note: '', image: '' }
 const emptyAchievement = { event: '', year: '', result: '' }
 const emptyTimeline = { year: '', title: '', text: '' }
 const emptySchedule = { day: '', time: '', focus: '', text: '' }
@@ -66,6 +66,20 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
 
     const reader = new FileReader()
     reader.onload = () => updateGalleryItem(index, 'image', reader.result)
+    reader.readAsDataURL(file)
+  }
+
+  const handleLeaderImageChange = (event, index) => {
+    const [file] = event.target.files
+    if (!file) return
+    if (file.size > 1_500_000) {
+      setNotice('Foto maksimal 1,5 MB agar penyimpanan browser tetap aman.')
+      event.target.value = ''
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = () => updateListItem('leaders', index, 'image', reader.result)
     reader.readAsDataURL(file)
   }
 
@@ -163,10 +177,14 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
           <div className="admin-gallery-list">
             {draft.leaders.map((leader, index) => (
               <article className="admin-list-item" key={`leader-${index}`}>
-                <label>Nama ketua<input value={leader.name} onChange={(event) => updateListItem('leaders', index, 'name', event.target.value)} /></label>
-                <label>Periode<input value={leader.period} onChange={(event) => updateListItem('leaders', index, 'period', event.target.value)} /></label>
-                <label>Keterangan<input value={leader.note} onChange={(event) => updateListItem('leaders', index, 'note', event.target.value)} /></label>
-                <button type="button" className="admin-remove" onClick={() => removeListItem('leaders', index)}>Hapus ketua</button>
+                <div className="admin-image-preview">{leader.image ? <img src={leader.image} alt="Pratinjau foto ketua" /> : <span>Belum ada foto</span>}</div>
+                <div className="admin-fields">
+                  <label>Nama ketua<input value={leader.name} onChange={(event) => updateListItem('leaders', index, 'name', event.target.value)} /></label>
+                  <label>Periode<input value={leader.period} onChange={(event) => updateListItem('leaders', index, 'period', event.target.value)} /></label>
+                  <label>Keterangan<input value={leader.note} onChange={(event) => updateListItem('leaders', index, 'note', event.target.value)} /></label>
+                  <label>File foto<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => handleLeaderImageChange(event, index)} /></label>
+                  <button type="button" className="admin-remove" onClick={() => removeListItem('leaders', index)}>Hapus ketua</button>
+                </div>
               </article>
             ))}
           </div>
