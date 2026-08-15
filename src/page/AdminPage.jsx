@@ -99,7 +99,6 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
           <h1>Dashboard Admin</h1>
         </div>
         <div className="admin-header-actions">
-          {adminName && <span className="admin-user-badge">Halo, {adminName}</span>}
           <button type="button" className="admin-secondary admin-logout" onClick={onLogout}>Logout</button>
           <a href="#beranda" className="admin-back" onClick={onBack}>← Lihat website</a>
         </div>
