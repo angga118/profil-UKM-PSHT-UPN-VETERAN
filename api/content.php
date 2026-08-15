@@ -89,7 +89,12 @@ try {
         'INSERT INTO site_content (content_key, content_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE content_value = VALUES(content_value)'
     );
 
+    // Do not write history & training into the database; they are saved to file via /api/update_sections.php
     foreach ($requiredKeys as $key) {
+        if (in_array($key, ['history', 'training'], true)) {
+            // skip writing these keys to DB to keep them file-based only
+            continue;
+        }
         $contentStatement->execute([$key, json_encode($data[$key], JSON_UNESCAPED_UNICODE)]);
     }
 
