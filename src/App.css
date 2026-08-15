@@ -15,6 +15,7 @@
   --muted: #69695d;
   --red: #9d1818;
   --green: #365c3c;
+  --admin-topbar-height: 72px; /* height used to offset page content when topbar is fixed */
 }
 
 * {
@@ -84,7 +85,11 @@ a {
 
 .admin-page {
   min-height: 100vh;
-  padding: clamp(26px, 5vw, 68px);
+  /* add top offset so content sits below the fixed admin topbar */
+  padding-top: calc(var(--admin-topbar-height) + clamp(24px, 4vw, 48px));
+  padding-right: clamp(26px, 5vw, 68px);
+  padding-bottom: clamp(26px, 5vw, 68px);
+  padding-left: clamp(26px, 5vw, 68px);
   background: linear-gradient(180deg, #fffaf0 0%, #fffdf8 30%, #ffffff 100%);
 }
 
@@ -95,10 +100,12 @@ a {
 }
 
 .admin-topbar {
-  position: sticky;
+  position: fixed; /* fixed at the very top */
   top: 0;
-  z-index: 40;
-  width: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: var(--admin-topbar-height);
   border-bottom: 1px solid var(--line);
   background: #ffffff;
 }
@@ -111,6 +118,7 @@ a {
   justify-content: space-between;
   gap: 12px;
   padding: 10px 18px;
+  height: 100%;
 }
 
 .admin-topbar-brand p {
