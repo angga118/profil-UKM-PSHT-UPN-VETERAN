@@ -1058,8 +1058,8 @@ a {
 
 .card-image img {
   width: min(68%, 190px);
-  opacity: 0.78;
-  filter: sepia(0.85) hue-rotate(342deg) saturate(1.15);
+  opacity: 1; /* show original image opacity */
+  filter: none; /* remove sepia/tint so images keep original colors */
 }
 
 .card-image.mini {
