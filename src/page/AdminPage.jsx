@@ -95,6 +95,8 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
     }
     onSave(draft)
     setNotice('Perubahan berhasil disimpan dan langsung tampil di website.')
+    // Scroll to top so the admin sees the confirmation / top of the page immediately
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }))
   }
 
   const removeGalleryItem = (index) => {
