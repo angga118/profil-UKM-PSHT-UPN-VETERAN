@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const emptyGalleryItem = { title: '', date: '', image: '' }
 const emptyLeader = { name: '', period: '', note: '', image: '' }
@@ -22,11 +22,32 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
     { id: 'admin-gallery', label: 'Galeri' },
   ]
 
+  const [activeSection, setActiveSection] = useState(adminSections[0].id)
+
   const scrollToAdmin = (sectionId) => {
     const target = document.getElementById(sectionId)
     if (!target) return
     target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    setActiveSection(sectionId)
   }
+
+  useEffect(() => {
+    const observerOptions = { root: null, rootMargin: '0px 0px -40% 0px', threshold: 0 }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id)
+        }
+      })
+    }, observerOptions)
+
+    adminSections.forEach((s) => {
+      const el = document.getElementById(s.id)
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [])
 
   const updateSection = (section, field, value) => {
     setDraft((current) => ({ ...current, [section]: { ...current[section], [field]: value } }))
@@ -140,7 +161,7 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
       <nav className="admin-nav" aria-label="Admin navigation">
         <ul>
           {adminSections.map((s) => (
-            <li key={s.id}><button type="button" onClick={() => scrollToAdmin(s.id)}>{s.label}</button></li>
+            <li key={s.id}><button type="button" className={activeSection === s.id ? 'active' : ''} onClick={() => scrollToAdmin(s.id)}>{s.label}</button></li>
           ))}
         </ul>
       </nav>
