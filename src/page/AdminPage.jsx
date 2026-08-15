@@ -179,7 +179,7 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
           <div className="admin-gallery-list">
             {draft.leaders.map((leader, index) => (
               <article className="admin-list-item" key={`leader-${index}`}>
-                <div className="admin-image-preview">{leader.image ? <img src={leader.image} alt="Pratinjau foto ketua" /> : <span>Belum ada foto</span>}</div>
+                <div className="admin-image-preview">{leader.image ? <img src={leader.image} alt="Pratinjau foto ketua" /> : <div aria-hidden="true" style={{ background: '#ffffff', width: 120, height: 80 }} />}</div>
                 <div className="admin-fields">
                   <label>Nama ketua<input value={leader.name} onChange={(event) => updateListItem('leaders', index, 'name', event.target.value)} /></label>
                   <label>Periode<input value={leader.period} onChange={(event) => updateListItem('leaders', index, 'period', event.target.value)} /></label>
