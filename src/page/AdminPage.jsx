@@ -7,7 +7,7 @@ const emptyTimeline = { year: '', title: '', text: '' }
 const emptySchedule = { day: '', time: '', focus: '', text: '' }
 const emptyHighlight = { title: '', text: '' }
 
-function AdminPage({ content, onBack, onSave, onReset }) {
+function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
   const [draft, setDraft] = useState(content)
   const [notice, setNotice] = useState('')
 
@@ -98,7 +98,11 @@ function AdminPage({ content, onBack, onSave, onReset }) {
           <p>Pengelolaan konten</p>
           <h1>Dashboard Admin</h1>
         </div>
-        <a href="#beranda" className="admin-back" onClick={onBack}>← Lihat website</a>
+        <div className="admin-header-actions">
+          {adminName && <span className="admin-user-badge">Halo, {adminName}</span>}
+          <button type="button" className="admin-secondary admin-logout" onClick={onLogout}>Logout</button>
+          <a href="#beranda" className="admin-back" onClick={onBack}>← Lihat website</a>
+        </div>
       </header>
 
       <form className="admin-form" onSubmit={handleSave}>

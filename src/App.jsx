@@ -161,6 +161,8 @@ function App() {
       body: JSON.stringify({ action: 'logout' }),
     })
     setAdmin(null)
+    router.go('#beranda')
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }))
   }
 
   if (router.activeHash === '#admin') {
