@@ -101,30 +101,39 @@ a {
   max-width: 980px;
   margin: 0 auto 18px;
   padding: 8px 12px;
-  background: rgba(255,255,255,0.92);
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  background: transparent;
 }
 
 .admin-nav ul {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 6px 8px;
   display: flex;
-  gap: 8px;
+  gap: 12px;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-start;
 }
 
 .admin-nav button {
   display: inline-block;
-  padding: 8px 12px;
+  padding: 10px 16px;
   border: 1px solid var(--line);
-  background: #ffffff;
-  border-radius: 6px;
+  background: #fff;
+  border-radius: 12px;
   text-align: center;
   font-weight: 800;
   cursor: pointer;
+  box-shadow: 0 6px 18px rgba(72,63,24,0.06);
+}
+
+.admin-nav button:hover { transform: translateY(-2px); }
+
+.admin-nav button.active {
+  background: var(--wood-light);
+  border-color: rgba(214,179,47,0.6);
+  color: var(--wood-dark);
+  box-shadow: 0 10px 26px rgba(214,179,47,0.12);
 }
 
 .admin-nav button:active,
@@ -135,7 +144,7 @@ a {
 @media (max-width: 520px) {
   .admin-nav { padding: 8px; }
   .admin-nav ul { gap: 6px; }
-  .admin-nav button { padding: 8px 10px; font-size: 0.85rem; }
+  .admin-nav button { padding: 8px 10px; font-size: 0.85rem; border-radius: 8px }
 }
 
 
