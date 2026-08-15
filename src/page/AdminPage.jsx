@@ -22,7 +22,12 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
   const scrollToAdmin = (sectionId) => {
     const target = document.getElementById(sectionId)
     if (!target) return
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // read CSS variable for topbar height (fallback to 72)
+    const computed = getComputedStyle(document.documentElement).getPropertyValue('--admin-topbar-height') || '72px'
+    const topbarHeight = parseInt(computed, 10) || 72
+    const offset = topbarHeight + 12
+    const top = Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset)
+    window.scrollTo({ top, behavior: 'smooth' })
     setActiveSection(sectionId)
   }
 

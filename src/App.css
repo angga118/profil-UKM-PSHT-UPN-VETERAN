@@ -121,6 +121,10 @@ a {
   height: 100%;
 }
 
+/* Ensure header and sections sit below topbar */
+.admin-header { margin-top: calc(var(--admin-topbar-height) + 12px); }
+.admin-card { scroll-margin-top: calc(var(--admin-topbar-height) + 24px); }
+
 .admin-topbar-brand p {
   margin: 0;
   font-weight: 900;
