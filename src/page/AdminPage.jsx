@@ -65,6 +65,16 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
     return () => observer.disconnect()
   }, [])
 
+  // Ensure draft includes history & training so editors don't crash if content defaults were missing
+  useEffect(() => {
+    setDraft((current) => ({
+      ...current,
+      history: current.history || { eyebrow: 'Sejarah', title: '', description: '', timeline: [] },
+      training: current.training || { eyebrow: 'Kegiatan', title: '', description: '', schedule: [], highlights: [] },
+      profileCards: current.profileCards || [emptyProfileCard],
+    }))
+  }, [content])
+
   const updateSection = (section, field, value) => {
     setDraft((current) => ({ ...current, [section]: { ...current[section], [field]: value } }))
   }
@@ -329,7 +339,7 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
     }
   }
 
-  const handleSave = (event) => {
+  const handleSave = async (event) => {
     event.preventDefault()
     const profile = draft.profile ?? { eyebrow: '', title: '', description: '' }
     const profileCards = Array.isArray(draft.profileCards) ? draft.profileCards : []
@@ -353,6 +363,30 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
       setNotice('Lengkapi nama dan periode ketua, serta seluruh data prestasi.')
       return
     }
+    if ((draft.profileCards || []).some((c) => !String(c.title || '').trim() || !String(c.eyebrow || '').trim())) {
+      setNotice('Lengkapi judul dan eyebrow untuk setiap kartu profil.')
+      return
+    }
+
+    // First save history & training to file via the new endpoint so they don't go into DB
+    try {
+      const resp = await fetch('/ukm-psht/api/update_sections.php', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ history: draft.history, training: draft.training }),
+        credentials: 'same-origin',
+      })
+      const json = await resp.json().catch(() => ({}))
+      if (!resp.ok) {
+        setNotice('Gagal menyimpan Sejarah/Latihan: ' + (json.message || resp.statusText))
+        return
+      }
+    } catch (err) {
+      setNotice('Gagal menyimpan Sejarah/Latihan: ' + (err.message || String(err)))
+      return
+    }
+
+    // Then save the rest of the site content (content.php will skip history/training when writing to DB)
     onSave(draft)
     setNotice('Perubahan berhasil disimpan dan langsung tampil di website.')
     // Scroll to top so the admin sees the confirmation / top of the page immediately
