@@ -96,40 +96,46 @@ a {
 
 .admin-nav {
   position: sticky;
-  top: 110px;
-  max-width: 140px;
+  top: 92px; /* stick below top (adjust if site header height differs) */
+  z-index: 20;
+  max-width: 980px;
   margin: 0 auto 18px;
-  display: none; /* hidden on small screens */
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid var(--line);
+  border-radius: 8px;
 }
 
 .admin-nav ul {
   list-style: none;
   margin: 0;
-  padding: 8px;
+  padding: 0;
   display: flex;
-  flex-direction: column;
   gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .admin-nav button {
-  display: block;
-  width: 100%;
-  padding: 8px 10px;
+  display: inline-block;
+  padding: 8px 12px;
   border: 1px solid var(--line);
-  background: #fff;
+  background: #ffffff;
   border-radius: 6px;
-  text-align: left;
+  text-align: center;
   font-weight: 800;
   cursor: pointer;
 }
 
-@media (min-width: 980px) {
-  .admin-nav { display: block; position: fixed; right: 28px; top: 120px; }
-  .admin-form { max-width: 880px; }
+.admin-nav button:active,
+.admin-nav button:focus {
+  outline: 2px solid rgba(214,179,47,0.18);
 }
 
-@media (max-width: 980px) {
-  .admin-nav { display: none; }
+@media (max-width: 520px) {
+  .admin-nav { padding: 8px; }
+  .admin-nav ul { gap: 6px; }
+  .admin-nav button { padding: 8px 10px; font-size: 0.85rem; }
 }
 
 
