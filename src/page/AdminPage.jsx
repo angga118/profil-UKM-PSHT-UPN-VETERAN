@@ -11,6 +11,23 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
   const [draft, setDraft] = useState(content)
   const [notice, setNotice] = useState('')
 
+  const adminSections = [
+    { id: 'admin-hero', label: 'Beranda' },
+    { id: 'admin-welcome', label: 'Sambutan' },
+    { id: 'admin-profile', label: 'Profil' },
+    { id: 'admin-history', label: 'Sejarah' },
+    { id: 'admin-training', label: 'Latihan' },
+    { id: 'admin-leaders', label: 'Ketua' },
+    { id: 'admin-achievements', label: 'Prestasi' },
+    { id: 'admin-gallery', label: 'Galeri' },
+  ]
+
+  const scrollToAdmin = (sectionId) => {
+    const target = document.getElementById(sectionId)
+    if (!target) return
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const updateSection = (section, field, value) => {
     setDraft((current) => ({ ...current, [section]: { ...current[section], [field]: value } }))
   }
@@ -120,21 +137,29 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
         </div>
       </header>
 
+      <nav className="admin-nav" aria-label="Admin navigation">
+        <ul>
+          {adminSections.map((s) => (
+            <li key={s.id}><button type="button" onClick={() => scrollToAdmin(s.id)}>{s.label}</button></li>
+          ))}
+        </ul>
+      </nav>
+
       <form className="admin-form" onSubmit={handleSave}>
-        <section className="admin-card">
+        <section id="admin-hero" className="admin-card">
           <h2>Narasi beranda</h2>
           <label>Label kecil<input value={draft.hero.eyebrow} onChange={(event) => updateSection('hero', 'eyebrow', event.target.value)} /></label>
           <label>Judul utama<textarea rows="2" value={draft.hero.title} onChange={(event) => updateSection('hero', 'title', event.target.value)} /></label>
           <label>Narasi utama<textarea rows="3" value={draft.hero.description} onChange={(event) => updateSection('hero', 'description', event.target.value)} /></label>
         </section>
 
-        <section className="admin-card">
+        <section id="admin-welcome" className="admin-card">
           <h2>Sambutan</h2>
           <label>Judul<input value={draft.welcome.title} onChange={(event) => updateSection('welcome', 'title', event.target.value)} /></label>
           <label>Narasi<textarea rows="3" value={draft.welcome.text} onChange={(event) => updateSection('welcome', 'text', event.target.value)} /></label>
         </section>
 
-        <section className="admin-card">
+        <section id="admin-profile" className="admin-card">
           <div className="admin-section-heading">
             <div><h2>Profil UKM</h2><span>Ubah informasi untuk Sejarah UKM dan Latihan Rutin.</span></div>
           </div>
@@ -151,7 +176,7 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
           </div>
         </section>
 
-        <section className="admin-card">
+        <section id="admin-history" className="admin-card">
           <div className="admin-section-heading"><div><h2>Isi halaman Sejarah UKM</h2><span>Ubah judul, narasi, dan perjalanan organisasi yang tampil saat “Lihat detail” dipilih.</span></div></div>
           <label>Label<input value={draft.history.eyebrow} onChange={(event) => updateSection('history', 'eyebrow', event.target.value)} /></label>
           <label>Judul halaman<input value={draft.history.title} onChange={(event) => updateSection('history', 'title', event.target.value)} /></label>
@@ -160,7 +185,7 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
           {draft.history.timeline.map((item, index) => <article className="admin-list-item" key={`history-timeline-${index}`}><label>Tahun<input value={item.year} onChange={(event) => updateDetailItem('history', 'timeline', index, 'year', event.target.value)} /></label><label>Judul<input value={item.title} onChange={(event) => updateDetailItem('history', 'timeline', index, 'title', event.target.value)} /></label><label>Narasi<input value={item.text} onChange={(event) => updateDetailItem('history', 'timeline', index, 'text', event.target.value)} /></label><button type="button" className="admin-remove" onClick={() => removeDetailItem('history', 'timeline', index)}>Hapus</button></article>)}
         </section>
 
-        <section className="admin-card">
+        <section id="admin-training" className="admin-card">
           <div className="admin-section-heading"><div><h2>Isi halaman Latihan Rutin</h2><span>Ubah isi halaman detail jadwal dan fokus pembinaan.</span></div></div>
           <label>Label<input value={draft.training.eyebrow} onChange={(event) => updateSection('training', 'eyebrow', event.target.value)} /></label>
           <label>Judul halaman<input value={draft.training.title} onChange={(event) => updateSection('training', 'title', event.target.value)} /></label>
@@ -171,7 +196,7 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
           {draft.training.highlights.map((item, index) => <article className="admin-list-item" key={`training-highlights-${index}`}><label>Judul<input value={item.title} onChange={(event) => updateDetailItem('training', 'highlights', index, 'title', event.target.value)} /></label><label>Narasi<input value={item.text} onChange={(event) => updateDetailItem('training', 'highlights', index, 'text', event.target.value)} /></label><button type="button" className="admin-remove" onClick={() => removeDetailItem('training', 'highlights', index)}>Hapus</button></article>)}
         </section>
 
-        <section className="admin-card">
+        <section id="admin-leaders" className="admin-card">
           <div className="admin-section-heading">
             <div><h2>Daftar ketua UKM</h2><span>Urutkan dari periode terbaru.</span></div>
             <button type="button" className="admin-secondary" onClick={() => addListItem('leaders', emptyLeader)}>+ Tambah ketua</button>
@@ -192,7 +217,7 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
           </div>
         </section>
 
-        <section className="admin-card">
+        <section id="admin-achievements" className="admin-card">
           <div className="admin-section-heading">
             <div><h2>Prestasi anggota dan UKM</h2><span>Tambahkan rekam jejak lomba dan pencapaian terbaru.</span></div>
             <button type="button" className="admin-secondary" onClick={() => addListItem('achievements', emptyAchievement)}>+ Tambah prestasi</button>
@@ -209,7 +234,7 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
           </div>
         </section>
 
-        <section className="admin-card admin-gallery-card">
+        <section id="admin-gallery" className="admin-card admin-gallery-card">
           <div className="admin-section-heading">
             <div><h2>Galeri foto</h2><span>Unggah foto JPG, PNG, atau WebP maksimal 1,5 MB.</span></div>
             <button type="button" className="admin-secondary" onClick={() => setDraft((current) => ({ ...current, gallery: [...current.gallery, emptyGalleryItem] }))}>+ Tambah foto</button>
