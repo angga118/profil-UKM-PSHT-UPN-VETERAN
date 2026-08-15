@@ -147,6 +147,14 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
 
   return (
     <main className="admin-page">
+      <nav className="admin-nav" aria-label="Admin navigation">
+        <ul>
+          {adminSections.map((s) => (
+            <li key={s.id}><button type="button" className={activeSection === s.id ? 'active' : ''} onClick={() => scrollToAdmin(s.id)}>{s.label}</button></li>
+          ))}
+        </ul>
+      </nav>
+
       <header className="admin-header">
         <div>
           <p>Pengelolaan konten</p>
@@ -157,14 +165,6 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
           <a href="#beranda" className="admin-back" onClick={onBack}>← Lihat website</a>
         </div>
       </header>
-
-      <nav className="admin-nav" aria-label="Admin navigation">
-        <ul>
-          {adminSections.map((s) => (
-            <li key={s.id}><button type="button" className={activeSection === s.id ? 'active' : ''} onClick={() => scrollToAdmin(s.id)}>{s.label}</button></li>
-          ))}
-        </ul>
-      </nav>
 
       <form className="admin-form" onSubmit={handleSave}>
         <section id="admin-hero" className="admin-card">

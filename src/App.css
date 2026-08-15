@@ -96,7 +96,7 @@ a {
 
 .admin-nav {
   position: sticky;
-  top: 92px; /* stick below top (adjust if site header height differs) */
+  top: 24px; /* stick near top under page padding so nav appears above header */
   z-index: 20;
   max-width: 980px;
   margin: 0 auto 18px;
