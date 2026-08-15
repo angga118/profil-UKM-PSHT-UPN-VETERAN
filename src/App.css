@@ -314,10 +314,23 @@ a {
   place-items: center;
   overflow: hidden;
   border-radius: 6px;
-  background: #ece7ce;
+  background: #ffffff; /* neutral white for previews */
   color: var(--muted);
   font-size: 0.8rem;
   text-align: center;
+}
+
+/* when a card image intentionally blank, render a neutral frame */
+.card-image.blank {
+  background: #ffffff !important;
+  border: 1px solid var(--line);
+}
+
+.card-image-blank {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 6px;
 }
 
 .admin-image-preview img {

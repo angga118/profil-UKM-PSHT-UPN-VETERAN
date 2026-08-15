@@ -12,11 +12,11 @@ function LeadersSection({ leaders }) {
       <div className="card-grid">
         {leaders.map((leader, index) => (
           <article className="info-card reveal-on-scroll" key={`${leader.name}-${leader.period}`} style={{ '--reveal-delay': `${index * 80}ms` }}>
-            <div className="card-image mini">
+            <div className={`card-image mini ${leader.image ? '' : 'blank'}`}>
             {leader.image ? (
               <img src={leader.image} alt={leader.name} loading="lazy" decoding="async" />
             ) : (
-              <div className="card-image-blank" aria-hidden="true" style={{ background: '#ffffff', width: '100%', height: '100%' }} />
+              <div className="card-image-blank" aria-hidden="true" />
             )}
             </div>
             <div className="card-body">
