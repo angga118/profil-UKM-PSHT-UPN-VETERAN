@@ -10,17 +10,17 @@ function ProfileSection({ content, cards, onOpenDetail, onNavClick }) {
 
       <div className="profile-grid">
         {cards.map((card, index) => (
-          <article className="info-card feature-card reveal-on-scroll" key={card.title} style={{ '--reveal-delay': `${index * 90}ms` }}>
+          <article className="info-card feature-card reveal-on-scroll" key={`${card.title}-${index}`} style={{ '--reveal-delay': `${index * 90}ms` }}>
             <div className="card-image">
-              <img src={heroImg} alt="" loading="lazy" decoding="async" />
+              <img src={card.image || heroImg} alt={card.title || 'Foto card profil'} loading="lazy" decoding="async" />
             </div>
             <div className="card-body">
               <span>{card.eyebrow}</span>
               <h3>{card.title}</h3>
               <p>{card.text}</p>
               <ul>
-                {card.points.map((point) => (
-                  <li key={point}>{point}</li>
+                {(Array.isArray(card.points) ? card.points : []).map((point) => (
+                  <li key={`${card.title}-${point}`}>{point}</li>
                 ))}
               </ul>
               <a

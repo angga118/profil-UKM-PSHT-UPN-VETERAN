@@ -363,6 +363,15 @@ a {
   background: #fffdf3;
 }
 
+.admin-list-item-stack {
+  grid-template-columns: 1fr;
+  align-items: stretch;
+}
+
+.admin-list-item-stack .admin-fields {
+  grid-template-columns: 1fr;
+}
+
 .admin-card-editor {
   display: grid;
   gap: 12px;
@@ -392,6 +401,11 @@ a {
   color: var(--muted);
   font-size: 0.8rem;
   text-align: center;
+}
+
+.admin-image-preview-small {
+  min-height: 160px;
+  width: 100%;
 }
 
 /* when a card image intentionally blank, render a neutral frame */

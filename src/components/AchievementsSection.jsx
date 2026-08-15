@@ -10,8 +10,8 @@ function AchievementsSection({ achievements, onNavClick }) {
       <div className="card-grid three">
         {achievements.map((achievement, index) => (
           <article className="info-card reveal-on-scroll" key={`${achievement.event}-${achievement.year}`} style={{ '--reveal-delay': `${index * 90}ms` }}>
-            <div className="card-image mini red">
-              <strong>{achievement.year}</strong>
+            <div className={achievement.image ? 'card-image mini' : 'card-image mini red'}>
+              {achievement.image ? <img src={achievement.image} alt={achievement.event || 'Foto prestasi'} loading="lazy" decoding="async" /> : <strong>{achievement.year}</strong>}
             </div>
             <div className="card-body">
               <span>Prestasi</span>

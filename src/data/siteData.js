@@ -19,6 +19,7 @@ export const profileCards = [
     points: ['Tahun berdiri', 'Tokoh perintis', 'Filosofi latihan'],
     href: '#sejarah',
     detailRoute: '#sejarah-detail',
+    image: '',
   },
   {
     title: 'Latihan Rutin',
@@ -27,6 +28,7 @@ export const profileCards = [
     points: ['Selasa dan Kamis', 'Pendampingan pelatih', 'Pembinaan fisik dan teknik'],
     href: '#kontak',
     detailRoute: '#latihan-rutin-detail',
+    image: '',
   },
 ]
 
@@ -42,16 +44,19 @@ export const achievements = [
     event: 'Kejuaraan Pencak Silat Mahasiswa',
     year: '2025',
     result: 'Juara 1 Tanding Kelas Putra',
+    image: '',
   },
   {
     event: 'Pekan Olahraga Mahasiswa Daerah',
     year: '2024',
     result: 'Medali Perak Kategori Seni Tunggal',
+    image: '',
   },
   {
     event: 'Festival UKM Bela Diri UPN',
     year: '2024',
     result: 'Penampilan Terbaik Demonstrasi Jurus',
+    image: '',
   },
 ]
 

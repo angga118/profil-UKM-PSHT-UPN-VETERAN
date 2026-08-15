@@ -1,17 +1,33 @@
 import { useState, useEffect } from 'react'
 
 const emptyGalleryItem = { title: '', date: '', image: '' }
+const emptyProfileCard = { title: '', eyebrow: '', text: '', points: ['', '', ''], href: '#', detailRoute: '#sejarah-detail', image: '' }
 const emptyLeader = { name: '', period: '', note: '', image: '' }
-const emptyAchievement = { event: '', year: '', result: '' }
+const emptyAchievement = { event: '', year: '', result: '', image: '' }
 const emptyTimeline = { year: '', title: '', text: '' }
 const emptySchedule = { day: '', time: '', focus: '', text: '' }
 const emptyHighlight = { title: '', text: '' }
 
 function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
-  const [draft, setDraft] = useState(content)
+  const safeContent = {
+    ...content,
+    profile: content?.profile ?? { eyebrow: '', title: '', description: '' },
+    profileCards: Array.isArray(content?.profileCards) ? content.profileCards : [],
+    history: content?.history ?? { eyebrow: '', title: '', description: '', timeline: [] },
+    training: content?.training ?? { eyebrow: '', title: '', description: '', schedule: [], highlights: [] },
+    gallery: Array.isArray(content?.gallery) ? content.gallery : [],
+    leaders: Array.isArray(content?.leaders) ? content.leaders : [],
+    achievements: Array.isArray(content?.achievements) ? content.achievements : [],
+  }
+
+  const [draft, setDraft] = useState(safeContent)
   const [notice, setNotice] = useState('')
 
   const adminSections = [
+    { id: 'admin-profile', label: 'Profil' },
+    { id: 'admin-profile-cards', label: 'Card Profil' },
+    { id: 'admin-history', label: 'Sejarah' },
+    { id: 'admin-training', label: 'Latihan' },
     { id: 'admin-leaders', label: 'Ketua' },
     { id: 'admin-achievements', label: 'Prestasi' },
     { id: 'admin-gallery', label: 'Galeri' },
@@ -93,21 +109,147 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
     setDraft((current) => ({ ...current, [section]: { ...current[section], [list]: current[section][list].filter((_, itemIndex) => itemIndex !== index) } }))
   }
 
-  const handleImageChange = (event, index) => {
-    const [file] = event.target.files
-    if (!file) return
-    if (file.size > 1_500_000) {
-      setNotice('Foto maksimal 1,5 MB agar penyimpanan browser tetap aman.')
-      event.target.value = ''
-      return
-    }
-
-    const reader = new FileReader()
-    reader.onload = () => updateGalleryItem(index, 'image', reader.result)
-    reader.readAsDataURL(file)
+  const updateProfileCard = (index, field, value) => {
+    setDraft((current) => ({
+      ...current,
+      profileCards: current.profileCards.map((card, cardIndex) => cardIndex === index ? { ...card, [field]: value } : card),
+    }))
   }
 
-  const handleLeaderImageChange = (event, index) => {
+  const updateProfileCardPoint = (cardIndex, pointIndex, value) => {
+    setDraft((current) => ({
+      ...current,
+      profileCards: current.profileCards.map((card, index) => {
+        if (index !== cardIndex) return card
+        return {
+          ...card,
+          points: card.points.map((point, pointIndexValue) => pointIndexValue === pointIndex ? value : point),
+        }
+      }),
+    }))
+  }
+
+  const updateHistoryItem = (index, field, value) => {
+    setDraft((current) => ({
+      ...current,
+      history: {
+        ...current.history,
+        timeline: current.history.timeline.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item),
+      },
+    }))
+  }
+
+  const updateScheduleItem = (index, field, value) => {
+    setDraft((current) => ({
+      ...current,
+      training: {
+        ...current.training,
+        schedule: current.training.schedule.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item),
+      },
+    }))
+  }
+
+  const updateHighlightItem = (index, field, value) => {
+    setDraft((current) => ({
+      ...current,
+      training: {
+        ...current.training,
+        highlights: current.training.highlights.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item),
+      },
+    }))
+  }
+
+  const addProfileCardPoint = (cardIndex) => {
+    setDraft((current) => ({
+      ...current,
+      profileCards: current.profileCards.map((card, index) => index === cardIndex ? { ...card, points: [...card.points, ''] } : card),
+    }))
+  }
+
+  const removeProfileCardPoint = (cardIndex, pointIndex) => {
+    setDraft((current) => ({
+      ...current,
+      profileCards: current.profileCards.map((card, index) => {
+        if (index !== cardIndex) return card
+        const nextPoints = card.points.filter((_, itemIndex) => itemIndex !== pointIndex)
+        return {
+          ...card,
+          points: nextPoints.length > 0 ? nextPoints : [''],
+        }
+      }),
+    }))
+  }
+
+  const addHistoryItem = () => {
+    setDraft((current) => ({
+      ...current,
+      history: { ...current.history, timeline: [...current.history.timeline, { ...emptyTimeline }] },
+    }))
+  }
+
+  const removeHistoryItem = (index) => {
+    setDraft((current) => ({
+      ...current,
+      history: {
+        ...current.history,
+        timeline: current.history.timeline.filter((_, itemIndex) => itemIndex !== index),
+      },
+    }))
+  }
+
+  const addScheduleItem = () => {
+    setDraft((current) => ({
+      ...current,
+      training: { ...current.training, schedule: [...current.training.schedule, { ...emptySchedule }] },
+    }))
+  }
+
+  const removeScheduleItem = (index) => {
+    setDraft((current) => ({
+      ...current,
+      training: {
+        ...current.training,
+        schedule: current.training.schedule.filter((_, itemIndex) => itemIndex !== index),
+      },
+    }))
+  }
+
+  const addHighlightItem = () => {
+    setDraft((current) => ({
+      ...current,
+      training: { ...current.training, highlights: [...current.training.highlights, { ...emptyHighlight }] },
+    }))
+  }
+
+  const removeHighlightItem = (index) => {
+    setDraft((current) => ({
+      ...current,
+      training: {
+        ...current.training,
+        highlights: current.training.highlights.filter((_, itemIndex) => itemIndex !== index),
+      },
+    }))
+  }
+
+  const uploadImageFile = async (file) => {
+    const formData = new FormData()
+    formData.append('image', file)
+
+    const response = await fetch('/api/upload.php', {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: formData,
+    })
+
+    const data = await response.json().catch(() => ({}))
+    if (!response.ok) {
+      throw new Error(data.message || 'Upload foto gagal.')
+    }
+
+    return data.image
+  }
+
+  const handleImageChange = async (event, index) => {
     const [file] = event.target.files
     if (!file) return
     if (file.size > 1_500_000) {
@@ -116,18 +258,98 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = () => updateListItem('leaders', index, 'image', reader.result)
-    reader.readAsDataURL(file)
+    try {
+      const imageUrl = await uploadImageFile(file)
+      updateGalleryItem(index, 'image', imageUrl)
+      setNotice('Foto galeri berhasil diunggah.')
+    } catch (error) {
+      setNotice(error.message)
+    } finally {
+      event.target.value = ''
+    }
+  }
+
+  const handleLeaderImageChange = async (event, index) => {
+    const [file] = event.target.files
+    if (!file) return
+    if (file.size > 1_500_000) {
+      setNotice('Foto maksimal 1,5 MB agar penyimpanan browser tetap aman.')
+      event.target.value = ''
+      return
+    }
+
+    try {
+      const imageUrl = await uploadImageFile(file)
+      updateListItem('leaders', index, 'image', imageUrl)
+      setNotice('Foto ketua berhasil diunggah.')
+    } catch (error) {
+      setNotice(error.message)
+    } finally {
+      event.target.value = ''
+    }
+  }
+
+  const handleProfileCardImageChange = async (event, index) => {
+    const [file] = event.target.files
+    if (!file) return
+    if (file.size > 1_500_000) {
+      setNotice('Foto maksimal 1,5 MB agar penyimpanan browser tetap aman.')
+      event.target.value = ''
+      return
+    }
+
+    try {
+      const imageUrl = await uploadImageFile(file)
+      updateProfileCard(index, 'image', imageUrl)
+      setNotice('Foto card profil berhasil diunggah.')
+    } catch (error) {
+      setNotice(error.message)
+    } finally {
+      event.target.value = ''
+    }
+  }
+
+  const handleAchievementImageChange = async (event, index) => {
+    const [file] = event.target.files
+    if (!file) return
+    if (file.size > 1_500_000) {
+      setNotice('Foto maksimal 1,5 MB agar penyimpanan browser tetap aman.')
+      event.target.value = ''
+      return
+    }
+
+    try {
+      const imageUrl = await uploadImageFile(file)
+      updateListItem('achievements', index, 'image', imageUrl)
+      setNotice('Foto prestasi berhasil diunggah.')
+    } catch (error) {
+      setNotice(error.message)
+    } finally {
+      event.target.value = ''
+    }
   }
 
   const handleSave = (event) => {
     event.preventDefault()
-    if (draft.gallery.some((item) => !item.title.trim() || !item.image)) {
+    const profile = draft.profile ?? { eyebrow: '', title: '', description: '' }
+    const profileCards = Array.isArray(draft.profileCards) ? draft.profileCards : []
+    const gallery = Array.isArray(draft.gallery) ? draft.gallery : []
+    const leaders = Array.isArray(draft.leaders) ? draft.leaders : []
+    const achievements = Array.isArray(draft.achievements) ? draft.achievements : []
+
+    if (!String(profile.eyebrow ?? '').trim() || !String(profile.title ?? '').trim() || !String(profile.description ?? '').trim()) {
+      setNotice('Judul dan deskripsi profil UKM wajib diisi.')
+      return
+    }
+    if (profileCards.some((card) => !String(card?.title ?? '').trim() || !String(card?.text ?? '').trim())) {
+      setNotice('Setiap card profil harus memiliki judul dan deskripsi.')
+      return
+    }
+    if (gallery.some((item) => !String(item?.title ?? '').trim() || !item?.image)) {
       setNotice('Setiap foto galeri harus memiliki judul dan file gambar.')
       return
     }
-    if (draft.leaders.some((item) => !item.name.trim() || !item.period.trim()) || draft.achievements.some((item) => !item.event.trim() || !item.year.trim() || !item.result.trim())) {
+    if (leaders.some((item) => !String(item?.name ?? '').trim() || !String(item?.period ?? '').trim()) || achievements.some((item) => !String(item?.event ?? '').trim() || !String(item?.year ?? '').trim() || !String(item?.result ?? '').trim())) {
       setNotice('Lengkapi nama dan periode ketua, serta seluruh data prestasi.')
       return
     }
@@ -174,13 +396,126 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
 
       <form className="admin-form" onSubmit={handleSave}>
 
+        <section id="admin-profile" className="admin-card">
+          <div className="admin-section-heading">
+            <div><h2>Profil UKM</h2><span>Ubah judul, subtitle, dan deskripsi profil utama di landing page.</span></div>
+          </div>
+          <div className="admin-fields">
+            <label>Eyebrow<input value={draft.profile?.eyebrow ?? ''} onChange={(event) => updateSection('profile', 'eyebrow', event.target.value)} /></label>
+            <label>Judul profil<input value={draft.profile?.title ?? ''} onChange={(event) => updateSection('profile', 'title', event.target.value)} /></label>
+            <label>Deskripsi profil<textarea value={draft.profile?.description ?? ''} onChange={(event) => updateSection('profile', 'description', event.target.value)} rows={4} /></label>
+          </div>
+        </section>
+
+        <section id="admin-profile-cards" className="admin-card">
+          <div className="admin-section-heading">
+            <div><h2>Card profil</h2><span>Atur teks, poin utama, dan link tiap card informasi UKM.</span></div>
+            <button type="button" className="admin-secondary" onClick={() => addListItem('profileCards', { ...emptyProfileCard, points: ['', '', ''] })}>+ Tambah card</button>
+          </div>
+
+          <div className="admin-gallery-list">
+            {(Array.isArray(draft.profileCards) ? draft.profileCards : []).map((card, index) => (
+              <article className="admin-list-item admin-list-item-stack" key={`profile-card-${index}`}>
+                <div className="admin-image-preview admin-image-preview-small">{card.image ? <img src={card.image} alt="Pratinjau card profil" /> : <span>Belum ada foto card</span>}</div>
+                <div className="admin-fields">
+                  <label>Label card<input value={card.eyebrow} onChange={(event) => updateProfileCard(index, 'eyebrow', event.target.value)} /></label>
+                  <label>Judul card<input value={card.title} onChange={(event) => updateProfileCard(index, 'title', event.target.value)} /></label>
+                  <label>Deskripsi card<textarea value={card.text} onChange={(event) => updateProfileCard(index, 'text', event.target.value)} rows={4} /></label>
+                  <div className="admin-list-points">
+                    <span>Poin utama</span>
+                    {card.points.map((point, pointIndex) => (
+                      <div className="admin-point-row" key={`profile-card-point-${index}-${pointIndex}`}>
+                        <input value={point} onChange={(event) => updateProfileCardPoint(index, pointIndex, event.target.value)} />
+                        <button type="button" className="admin-remove" onClick={() => removeProfileCardPoint(index, pointIndex)}>Hapus</button>
+                      </div>
+                    ))}
+                    <button type="button" className="admin-secondary" onClick={() => addProfileCardPoint(index)}>+ Tambah poin</button>
+                  </div>
+                  <label>File foto card<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => handleProfileCardImageChange(event, index)} /></label>
+                  <label>Link navigasi (href)<input value={card.href ?? '#'} onChange={(event) => updateProfileCard(index, 'href', event.target.value)} /></label>
+                  <label>Detail route<input value={card.detailRoute ?? '#'} onChange={(event) => updateProfileCard(index, 'detailRoute', event.target.value)} /></label>
+                  <button type="button" className="admin-remove" onClick={() => removeListItem('profileCards', index)}>Hapus card</button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="admin-history" className="admin-card">
+          <div className="admin-section-heading">
+            <div><h2>Detail sejarah UKM</h2><span>Ubah judul, deskripsi, dan garis waktu halaman sejarah.</span></div>
+            <button type="button" className="admin-secondary" onClick={addHistoryItem}>+ Tambah tahun</button>
+          </div>
+
+          <div className="admin-fields">
+            <label>Eyebrow<input value={draft.history?.eyebrow ?? ''} onChange={(event) => updateSection('history', 'eyebrow', event.target.value)} /></label>
+            <label>Judul sejarah<input value={draft.history?.title ?? ''} onChange={(event) => updateSection('history', 'title', event.target.value)} /></label>
+            <label>Deskripsi sejarah<textarea value={draft.history?.description ?? ''} onChange={(event) => updateSection('history', 'description', event.target.value)} rows={4} /></label>
+          </div>
+
+          <div className="admin-gallery-list">
+            {(Array.isArray(draft.history?.timeline) ? draft.history.timeline : []).map((item, index) => (
+              <article className="admin-list-item admin-list-item-stack" key={`history-item-${index}`}>
+                <div className="admin-fields">
+                  <label>Tahun<input value={item.year} onChange={(event) => updateHistoryItem(index, 'year', event.target.value)} /></label>
+                  <label>Judul<input value={item.title} onChange={(event) => updateHistoryItem(index, 'title', event.target.value)} /></label>
+                  <label>Deskripsi<textarea value={item.text} onChange={(event) => updateHistoryItem(index, 'text', event.target.value)} rows={3} /></label>
+                  <button type="button" className="admin-remove" onClick={() => removeHistoryItem(index)}>Hapus tahun</button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="admin-training" className="admin-card">
+          <div className="admin-section-heading">
+            <div><h2>Detail latihan rutin</h2><span>Atur judul, jadwal, dan fokus pembinaan halaman latihan.</span></div>
+            <button type="button" className="admin-secondary" onClick={addScheduleItem}>+ Tambah jadwal</button>
+          </div>
+
+          <div className="admin-fields">
+            <label>Eyebrow<input value={draft.training?.eyebrow ?? ''} onChange={(event) => updateSection('training', 'eyebrow', event.target.value)} /></label>
+            <label>Judul latihan<input value={draft.training?.title ?? ''} onChange={(event) => updateSection('training', 'title', event.target.value)} /></label>
+            <label>Deskripsi latihan<textarea value={draft.training?.description ?? ''} onChange={(event) => updateSection('training', 'description', event.target.value)} rows={4} /></label>
+          </div>
+
+          <div className="admin-gallery-list">
+            <h3>Jadwal latihan</h3>
+            {(Array.isArray(draft.training?.schedule) ? draft.training.schedule : []).map((item, index) => (
+              <article className="admin-list-item admin-list-item-stack" key={`schedule-item-${index}`}>
+                <div className="admin-fields">
+                  <label>Hari<input value={item.day} onChange={(event) => updateScheduleItem(index, 'day', event.target.value)} /></label>
+                  <label>Waktu<input value={item.time} onChange={(event) => updateScheduleItem(index, 'time', event.target.value)} /></label>
+                  <label>Fokus<input value={item.focus} onChange={(event) => updateScheduleItem(index, 'focus', event.target.value)} /></label>
+                  <label>Deskripsi<textarea value={item.text} onChange={(event) => updateScheduleItem(index, 'text', event.target.value)} rows={3} /></label>
+                  <button type="button" className="admin-remove" onClick={() => removeScheduleItem(index)}>Hapus jadwal</button>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="admin-gallery-list">
+            <h3>Fokus pembinaan</h3>
+            {(Array.isArray(draft.training?.highlights) ? draft.training.highlights : []).map((item, index) => (
+              <article className="admin-list-item admin-list-item-stack" key={`highlight-item-${index}`}>
+                <div className="admin-fields">
+                  <label>Judul<input value={item.title} onChange={(event) => updateHighlightItem(index, 'title', event.target.value)} /></label>
+                  <label>Deskripsi<textarea value={item.text} onChange={(event) => updateHighlightItem(index, 'text', event.target.value)} rows={3} /></label>
+                  <button type="button" className="admin-remove" onClick={() => removeHighlightItem(index)}>Hapus fokus</button>
+                </div>
+              </article>
+            ))}
+            <button type="button" className="admin-secondary" onClick={addHighlightItem}>+ Tambah fokus</button>
+          </div>
+        </section>
+
         <section id="admin-leaders" className="admin-card">
           <div className="admin-section-heading">
             <div><h2>Daftar ketua UKM</h2><span>Urutkan dari periode terbaru.</span></div>
             <button type="button" className="admin-secondary" onClick={() => addListItem('leaders', emptyLeader)}>+ Tambah ketua</button>
           </div>
           <div className="admin-gallery-list">
-            {draft.leaders.map((leader, index) => (
+            {(Array.isArray(draft.leaders) ? draft.leaders : []).map((leader, index) => (
               <article className="admin-list-item" key={`leader-${index}`}>
                 <div className="admin-image-preview">{leader.image ? <img src={leader.image} alt="Pratinjau foto ketua" /> : <div aria-hidden="true" style={{ background: '#ffffff', width: 120, height: 80 }} />}</div>
                 <div className="admin-fields">
@@ -201,11 +536,13 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
             <button type="button" className="admin-secondary" onClick={() => addListItem('achievements', emptyAchievement)}>+ Tambah prestasi</button>
           </div>
           <div className="admin-gallery-list">
-            {draft.achievements.map((achievement, index) => (
-              <article className="admin-list-item" key={`achievement-${index}`}>
+            {(Array.isArray(draft.achievements) ? draft.achievements : []).map((achievement, index) => (
+              <article className="admin-list-item admin-list-item-stack" key={`achievement-${index}`}>
+                <div className="admin-image-preview admin-image-preview-small">{achievement.image ? <img src={achievement.image} alt="Pratinjau prestasi" /> : <span>Belum ada foto prestasi</span>}</div>
                 <label>Nama kejuaraan/prestasi<input value={achievement.event} onChange={(event) => updateListItem('achievements', index, 'event', event.target.value)} /></label>
                 <label>Tahun<input value={achievement.year} onChange={(event) => updateListItem('achievements', index, 'year', event.target.value)} /></label>
                 <label>Hasil/prestasi<input value={achievement.result} onChange={(event) => updateListItem('achievements', index, 'result', event.target.value)} /></label>
+                <label>File foto prestasi<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => handleAchievementImageChange(event, index)} /></label>
                 <button type="button" className="admin-remove" onClick={() => removeListItem('achievements', index)}>Hapus prestasi</button>
               </article>
             ))}
@@ -219,7 +556,7 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
           </div>
 
           <div className="admin-gallery-list">
-            {draft.gallery.map((item, index) => (
+            {(Array.isArray(draft.gallery) ? draft.gallery : []).map((item, index) => (
               <article className="admin-gallery-item" key={`gallery-item-${index}`}>
                 <div className="admin-image-preview">{item.image ? <img src={item.image} alt="Pratinjau galeri" /> : <span>Belum ada foto</span>}</div>
                 <div className="admin-fields">
