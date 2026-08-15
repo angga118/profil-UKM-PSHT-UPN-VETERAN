@@ -94,57 +94,65 @@ a {
   margin: 0 auto;
 }
 
-.admin-nav {
+.admin-topbar {
   position: sticky;
-  top: 24px; /* stick near top under page padding so nav appears above header */
-  z-index: 20;
-  max-width: 980px;
-  margin: 0 auto 18px;
-  padding: 8px 12px;
-  background: transparent;
+  top: 0;
+  z-index: 40;
+  width: 100%;
+  border-bottom: 1px solid var(--line);
+  background: #ffffff;
 }
 
-.admin-nav ul {
-  list-style: none;
-  margin: 0;
-  padding: 6px 8px;
+.admin-topbar-inner {
+  max-width: 1100px;
+  margin: 0 auto;
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px;
 }
 
-.admin-nav button {
-  display: inline-block;
-  padding: 10px 16px;
-  border: 1px solid var(--line);
-  background: #fff;
-  border-radius: 12px;
-  text-align: center;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 6px 18px rgba(72,63,24,0.06);
-}
-
-.admin-nav button:hover { transform: translateY(-2px); }
-
-.admin-nav button.active {
-  background: var(--wood-light);
-  border-color: rgba(214,179,47,0.6);
+.admin-topbar-brand p {
+  margin: 0;
+  font-weight: 900;
   color: var(--wood-dark);
-  box-shadow: 0 10px 26px rgba(214,179,47,0.12);
+  letter-spacing: 0.04em;
 }
 
-.admin-nav button:active,
-.admin-nav button:focus {
-  outline: 2px solid rgba(214,179,47,0.18);
+.admin-topbar-nav {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-@media (max-width: 520px) {
-  .admin-nav { padding: 8px; }
-  .admin-nav ul { gap: 6px; }
-  .admin-nav button { padding: 8px 10px; font-size: 0.85rem; border-radius: 8px }
+.admin-topbar-nav li button {
+  background: transparent;
+  border: 0;
+  padding: 8px 12px;
+  font-weight: 800;
+  color: var(--wood-dark);
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.admin-topbar-nav li button:hover {
+  background: rgba(214,179,47,0.06);
+}
+
+.admin-topbar-nav li button.active {
+  background: var(--wood-light);
+  color: var(--wood-dark);
+  box-shadow: 0 8px 20px rgba(214,179,47,0.08);
+  border: 1px solid rgba(214,179,47,0.2);
+}
+
+@media (max-width: 720px) {
+  .admin-topbar-inner { padding: 8px 12px; }
+  .admin-topbar-nav li button { padding: 8px 10px; font-size: 0.9rem }
 }
 
 

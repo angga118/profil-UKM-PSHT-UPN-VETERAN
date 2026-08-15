@@ -147,12 +147,18 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
 
   return (
     <main className="admin-page">
-      <nav className="admin-nav" aria-label="Admin navigation">
-        <ul>
-          {adminSections.map((s) => (
-            <li key={s.id}><button type="button" className={activeSection === s.id ? 'active' : ''} onClick={() => scrollToAdmin(s.id)}>{s.label}</button></li>
-          ))}
-        </ul>
+      <nav className="admin-topbar" aria-label="Admin topbar">
+        <div className="admin-topbar-inner">
+          <div className="admin-topbar-brand">
+            <p>Pengelolaan konten</p>
+          </div>
+
+          <ul className="admin-topbar-nav" role="tablist">
+            {adminSections.map((s) => (
+              <li key={s.id}><button role="tab" aria-selected={activeSection === s.id} type="button" className={activeSection === s.id ? 'active' : ''} onClick={() => scrollToAdmin(s.id)}>{s.label}</button></li>
+            ))}
+          </ul>
+        </div>
       </nav>
 
       <header className="admin-header">
