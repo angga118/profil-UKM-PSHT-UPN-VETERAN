@@ -368,9 +368,12 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
       return
     }
 
-    // First save history & training to file via the new endpoint so they don't go into DB
+    // First save history & training to file via the new endpoint so they don't go into DB.
+    // Use the project subfolder only when the app is actually served from /ukm-psht;
+    // Vite dev runs at the root and relies on the proxy for /api.
+    const sectionsApiBase = /^\/ukm-psht(?:\/|$)/.test(window.location.pathname) ? '/ukm-psht' : ''
     try {
-      const resp = await fetch('/ukm-psht/api/update_sections.php', {
+      const resp = await fetch(`${sectionsApiBase}/api/update_sections.php`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ history: draft.history, training: draft.training }),

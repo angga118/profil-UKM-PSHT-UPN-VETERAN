@@ -1,0 +1,62 @@
+{
+    "history": {
+        "eyebrow": ".",
+        "title": "Sejarah UKM PSHT",
+        "description": "Halaman ini adalah dummy. Ganti tahun dan narasinya setelah data organisasi telah dikonfirmasi.",
+        "timeline": [
+            {
+                "year": "2018",
+                "title": "Awal pembentukan komunitas",
+                "text": "Sejumlah mahasiswa mulai membentuk kelompok latihan pencak silat berbasis nilai persaudaraan di lingkungan kampus."
+            },
+            {
+                "year": "2020",
+                "title": "Penguatan kegiatan latihan",
+                "text": "Latihan rutin, pembinaan teknik, dan kegiatan silaturahmi mulai disusun lebih terarah untuk anggota."
+            },
+            {
+                "year": "2023",
+                "title": "Regenerasi kepengurusan",
+                "text": "Kepengurusan memperluas dokumentasi kegiatan serta membuka ruang kaderisasi bagi mahasiswa baru."
+            },
+            {
+                "year": "Sekarang",
+                "title": "Pembinaan dan prestasi",
+                "text": "UKM terus menjadi wadah latihan, pengembangan karakter, dan partisipasi mahasiswa dalam kegiatan kampus maupun kejuaraan."
+            }
+        ]
+    },
+    "training": {
+        "eyebrow": "Kegiatan",
+        "title": "Latihan Rutin UKM PSHT",
+        "description": "Jadwal dan agenda latihan berikut adalah contoh gambaran umum. Sesuaikan dengan jadwal resmi terbaru dari pengurus UKM.",
+        "schedule": [
+            {
+                "day": "Selasa",
+                "time": "19.22 WIB",
+                "focus": "Dasar teknik dan fisik",
+                "text": "Pemanasan, penguatan fisik dasar, serta pendalaman gerak dasar pencak silat untuk anggota baru maupun lama."
+            },
+            {
+                "day": "Kamis",
+                "time": "19.22 WIB",
+                "focus": "Jurus dan sparring terbimbing",
+                "text": "Pendalaman jurus, latihan pasangan, dan sparring ringan dengan pendampingan pelatih untuk menjaga keselamatan latihan."
+            }
+        ],
+        "highlights": [
+            {
+                "title": "Pendampingan pelatih",
+                "text": "Setiap sesi latihan didampingi pelatih dan senior untuk memastikan teknik yang benar dan aman."
+            },
+            {
+                "title": "Pembinaan fisik dan teknik",
+                "text": "Latihan dirancang bertahap, mulai dari kebugaran dasar hingga penguasaan jurus dan teknik pertarungan."
+            },
+            {
+                "title": "Nilai persaudaraan",
+                "text": "Selain teknik, latihan juga menanamkan nilai budi pekerti, kedisiplinan, dan persaudaraan antar anggota."
+            }
+        ]
+    }
+}
