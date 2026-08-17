@@ -351,10 +351,6 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
       setNotice('Judul dan deskripsi profil UKM wajib diisi.')
       return
     }
-    if (profileCards.some((card) => !String(card?.title ?? '').trim() || !String(card?.text ?? '').trim())) {
-      setNotice('Setiap card profil harus memiliki judul dan deskripsi.')
-      return
-    }
     if (gallery.some((item) => !String(item?.title ?? '').trim() || !item?.image)) {
       setNotice('Setiap foto galeri harus memiliki judul dan file gambar.')
       return
@@ -363,11 +359,6 @@ function AdminPage({ content, onBack, onSave, onReset, onLogout, adminName }) {
       setNotice('Lengkapi nama dan periode ketua, serta seluruh data prestasi.')
       return
     }
-    if ((draft.profileCards || []).some((c) => !String(c.title || '').trim() || !String(c.eyebrow || '').trim())) {
-      setNotice('Lengkapi judul dan eyebrow untuk setiap kartu profil.')
-      return
-    }
-
     // First save history & training to file via the new endpoint so they don't go into DB.
     // Use the project subfolder only when the app is actually served from /ukm-psht;
     // Vite dev runs at the root and relies on the proxy for /api.

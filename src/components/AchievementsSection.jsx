@@ -17,9 +17,6 @@ function AchievementsSection({ achievements, onNavClick }) {
               <span>Prestasi</span>
               <h3>{achievement.event}</h3>
               <p>{achievement.result}</p>
-              <a href="#kontak" onClick={(event) => onNavClick(event, '#kontak')}>
-                Lihat detail
-              </a>
             </div>
           </article>
         ))}

@@ -1,8 +1,8 @@
 {
     "history": {
-        "eyebrow": "Contoh konten",
+        "eyebrow": "Sejarah",
         "title": "Sejarah UKM PSHT",
-        "description": "Halaman ini adalah dummy. Ganti tahun dan narasinya setelah data organisasi telah dikonfirmasi.",
+        "description": "Perjalanan organisasi dan pembinaan karakter para anggota dari masa ke masa.",
         "timeline": [
             {
                 "year": "2018",
@@ -29,34 +29,8 @@
     "training": {
         "eyebrow": "Kegiatan",
         "title": "Latihan Rutin UKM PSHT",
-        "description": "Jadwal dan agenda latihan berikut adalah contoh gambaran umum. Sesuaikan dengan jadwal resmi terbaru dari pengurus UKM.",
-        "schedule": [
-            {
-                "day": "Selasa",
-                "time": "19.22 WIB",
-                "focus": "Dasar teknik dan fisik",
-                "text": "Pemanasan, penguatan fisik dasar, serta pendalaman gerak dasar pencak silat untuk anggota baru maupun lama."
-            },
-            {
-                "day": "Kamis",
-                "time": "19.22 WIB",
-                "focus": "Jurus dan sparring terbimbing",
-                "text": "Pendalaman jurus, latihan pasangan, dan sparring ringan dengan pendampingan pelatih untuk menjaga keselamatan latihan."
-            }
-        ],
-        "highlights": [
-            {
-                "title": "Pendampingan pelatih",
-                "text": "Setiap sesi latihan didampingi pelatih dan senior untuk memastikan teknik yang benar dan aman."
-            },
-            {
-                "title": "Pembinaan fisik dan teknik",
-                "text": "Latihan dirancang bertahap, mulai dari kebugaran dasar hingga penguasaan jurus dan teknik pertarungan."
-            },
-            {
-                "title": "Nilai persaudaraan",
-                "text": "Selain teknik, latihan juga menanamkan nilai budi pekerti, kedisiplinan, dan persaudaraan antar anggota."
-            }
-        ]
+        "description": "Jadwal dan agenda latihan berikut adalah gambaran umum dari kegiatan pembinaan UKM.",
+        "schedule": [],
+        "highlights": []
     }
 }

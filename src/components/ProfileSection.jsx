@@ -1,5 +1,5 @@
 import heroImg from '../assets/hero.png'
-function ProfileSection({ content, cards, onOpenDetail, onNavClick }) {
+function ProfileSection({ content, cards }) {
   return (
     <section className="catalog-section" id="sejarah">
       <div className="section-title reveal-on-scroll">
@@ -23,18 +23,6 @@ function ProfileSection({ content, cards, onOpenDetail, onNavClick }) {
                   <li key={`${card.title}-${point}`}>{point}</li>
                 ))}
               </ul>
-              <a
-                href={card.detailRoute ?? card.href}
-                onClick={(event) => {
-                  if (card.detailRoute) {
-                    event.preventDefault()
-                    onOpenDetail(card.detailRoute)
-                  }
-                  else onNavClick(event, card.href)
-                }}
-              >
-                Lihat detail
-              </a>
             </div>
           </article>
         ))}

@@ -1083,9 +1083,10 @@ a {
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-  max-width: 1060px;
+  grid-template-columns: minmax(0, 820px);
+  justify-content: center;
+  gap: 52px;
+  max-width: 1120px;
   margin: 0 auto;
 }
 
@@ -1132,7 +1133,19 @@ a {
 
 .feature-card {
   display: grid;
-  grid-template-columns: minmax(180px, 0.85fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  width: 100%;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.feature-card:hover,
+.info-card.feature-card.reveal-on-scroll.is-visible:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .card-image {
@@ -1146,8 +1159,22 @@ a {
 
 .card-image img {
   width: min(68%, 190px);
-  opacity: 1; /* show original image opacity */
-  filter: none; /* remove sepia/tint so images keep original colors */
+  opacity: 1;
+  filter: none;
+}
+
+.feature-card .card-image {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 260px;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+.feature-card .card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .card-image.mini {
@@ -1172,6 +1199,22 @@ a {
 
 .card-body {
   padding: 20px;
+}
+
+.feature-card .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 720px);
+  margin: 0 auto;
+  padding: 24px 0 0;
+  text-align: center;
+}
+
+.feature-card .card-body p {
+  width: 100%;
+  text-align: justify;
+  text-align-last: center;
 }
 
 .card-body span {
@@ -1202,12 +1245,22 @@ a {
   list-style: none;
 }
 
+.feature-card .card-body ul {
+  display: grid;
+  justify-items: center;
+}
+
 .card-body li {
   position: relative;
   padding-left: 16px;
   color: #5f5f52;
   font-size: 0.88rem;
   line-height: 1.65;
+}
+
+.feature-card .card-body li {
+  width: fit-content;
+  text-align: left;
 }
 
 .card-body li::before {
@@ -1665,7 +1718,6 @@ a {
     padding: 13px 14px;
   }
 
-  .profile-grid,
   .card-grid,
   .card-grid.three,
   .gallery-grid,
@@ -1735,7 +1787,6 @@ a {
     padding-bottom: 48px;
   }
 
-  .profile-grid,
   .card-grid,
   .card-grid.three,
   .gallery-grid {

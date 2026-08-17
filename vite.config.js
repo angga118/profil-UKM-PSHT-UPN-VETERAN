@@ -9,7 +9,7 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/ukm-psht/api'),
+        rewrite: (path) => path.replace(/^\/api/, '/profil-UKM-PSHT-UPN-VETERAN/api'),
       },
     },
   },
